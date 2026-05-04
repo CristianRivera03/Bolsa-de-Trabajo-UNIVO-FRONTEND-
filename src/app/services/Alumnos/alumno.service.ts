@@ -17,7 +17,7 @@ export class AlumnoService {
   constructor() { }
 
   consultar(model: VerificarAlumno): Observable<ResponseAPI<AlumnoActivo>> {
-    return this.http.post<ResponseAPI<AlumnoActivo>>(`${this.apiUrl}/consultar`, model);
+    return this.http.post<ResponseAPI<AlumnoActivo>>(`${this.apiUrl}consultar`, model);
   }
 
   registrar(model: RegistroEstudiante): Observable<ResponseAPI<Session>> {

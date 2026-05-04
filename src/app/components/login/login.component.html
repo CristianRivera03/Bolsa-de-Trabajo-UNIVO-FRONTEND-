@@ -1,0 +1,103 @@
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+
+
+<!-- Fondo principal (puedes ajustar la imagen de fondo de los cubos aquí) -->
+<div class="min-h-screen bg-primary flex items-center justify-center p-4" 
+     style="background-image: url('background.jpg'); background-size: cover; background-position: center;">
+  
+  <!-- Contenedor Principal (Tarjeta Dividida) -->
+  <div class="card lg:card-side bg-base-100 shadow-2xl max-w-4xl w-full mx-auto overflow-hidden rounded-box">
+    
+    <!-- Lado Izquierdo (Branding UNIVO) -->
+    <div class="bg-primary text-primary-content lg:w-1/2 p-10 lg:p-14 flex flex-col items-center justify-center relative text-center">
+      <img src="logo-univo.png" alt="Logo UNIVO" class="w-32 mb-6 drop-shadow-md" />
+      
+      <h1 class="text-xl font-bold tracking-widest mb-2">UNIVERSIDAD DE ORIENTE</h1>
+      
+      <h2 class="text-secondary font-bold text-lg mb-4">Bolsa de Trabajo</h2>
+      
+      <p class="text-xs opacity-90 max-w-[250px] leading-relaxed">
+        Portal de acceso para estudiantes y egresados. Encuentra tu próxima oportunidad laboral, pasantías y más.
+      </p>
+    </div>
+
+    <!-- Lado Derecho (Formulario) -->
+    <div class="lg:w-1/2 p-10 lg:p-14 bg-base-100 flex flex-col justify-center">
+      
+      <!-- Encabezado Formulario -->
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-extrabold text-primary mb-2">UNIVO</h2>
+        <p class="text-sm text-base-content/70">Inicia sesión en tu cuenta</p>
+      </div>
+
+      <!-- Formulario de Angular -->
+      <form class="flex flex-col gap-5">
+        
+        <!-- Input Usuario -->
+        <div class="form-control">
+          <label class="label py-1">
+            <span class="label-text font-bold text-xs text-base-content/80">Usuario <span class="text-error">*</span></span>
+          </label>
+          <label class="input bg-base-200 border-none flex items-center gap-3 rounded-xl focus-within:ring-2 focus-within:ring-primary/50 transition-all">
+            <!-- Ícono Usuario -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-50">
+              <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
+            </svg>
+            <input type="text" class="grow text-sm" placeholder="U20220435" />
+          </label>
+        </div>
+
+        <!-- Input Contraseña -->
+        <div class="form-control">
+          <label class="label py-1">
+            <span class="label-text font-bold text-xs text-base-content/80">Contraseña <span class="text-error">*</span></span>
+          </label>
+          <label class="input bg-base-200 border-none flex items-center gap-3 rounded-xl focus-within:ring-2 focus-within:ring-primary/50 transition-all">
+            <!-- Ícono Candado -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-50">
+              <path fill-rule="evenodd" d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z" clip-rule="evenodd" />
+            </svg>
+            <input type="password" class="grow text-sm" placeholder="••••••••" />
+          </label>
+        </div>
+
+        <!-- Link Olvidó Contraseña -->
+        <div class="text-right">
+          <a href="#" class="link link-hover text-info text-[11px] font-semibold transition-colors hover:text-primary">
+            ¿Olvidaste tu contraseña?
+          </a>
+        </div>
+
+        <!-- Botón Iniciar Sesión -->
+        <div class="mt-2">
+          <button type="submit" class="btn btn-primary w-full rounded-xl text-white shadow-lg shadow-primary/30">
+            <!-- Ícono Login Arrow -->
+            <span class="material-symbols-outlined">
+              login
+            </span>
+            Iniciar Sesión
+          </button>
+        </div>
+          
+        <div>
+          <button type="button" class="btn btn-primary w-full rounded-xl text-white shadow-lg shadow-primary/30" routerLink="/sign-up">
+            <!-- Ícono Login Arrow -->
+            <span class="material-symbols-outlined">
+              person_add
+            </span>
+            Registrarse
+          </button>
+        </div>
+      </form>
+
+      <!-- Footer -->
+      <div class="mt-12 text-center">
+        <p class="text-[10px] text-base-content/40 font-medium">
+          © 2026 Universidad de Oriente | Todos los derechos reservados
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
