@@ -1,0 +1,103 @@
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+
+<!-- Contenedor principal de pantalla completa -->
+<div class="flex h-screen bg-base-200 overflow-hidden font-sans">
+
+  <!-- ========================================== -->
+  <!-- SIDEBAR (MENÚ LATERAL)                     -->
+  <!-- ========================================== -->
+  <aside 
+    class="bg-base-100 shadow-xl flex flex-col transition-all duration-300 ease-in-out z-20 relative"
+    [ngClass]="isSidebarExpanded ? 'w-64' : 'w-20'">
+    
+    <!-- Header del Sidebar (Logo UNIVO) -->
+    <div class="bg-primary text-primary-content h-16 flex items-center justify-center transition-all duration-300">
+      <!-- Muestra la U sola si está colapsado, o el logo completo si está expandido -->
+      <div class="flex items-center gap-2 font-bold text-2xl tracking-wider">
+        <span class="text-4xl">U</span>
+        <span *ngIf="isSidebarExpanded" class="animate-fade-in whitespace-nowrap">UNIVO</span>
+      </div>
+    </div>
+
+    <!-- Título de sección (Solo visible expandido) -->
+    <div class="px-6 py-4 h-12">
+      <span *ngIf="isSidebarExpanded" class="text-xs font-bold text-base-content/50 tracking-widest uppercase animate-fade-in">
+        Menú Principal
+      </span>
+    </div>
+
+    <!-- Lista de Navegación -->
+    <nav class="flex-1 overflow-y-auto px-3">
+      <ul class="space-y-1">
+        <li *ngFor="let item of menuItems">
+          <!-- routerLinkActive te permite darle estilo al ítem seleccionado -->
+          <a [routerLink]="item.route" 
+             routerLinkActive="bg-base-200 text-primary font-semibold border-l-4 border-primary"
+             class="flex items-center px-3 py-3 rounded-lg text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors cursor-pointer group">
+            
+            <!-- Icono -->
+            <span class="material-symbols-outlined text-[22px] transition-transform group-hover:scale-110" 
+                  [ngClass]="isSidebarExpanded ? 'mr-4' : 'mx-auto'">
+              {{ item.icon }}
+            </span>
+            
+            <!-- Texto (Oculto si está colapsado) -->
+            <span *ngIf="isSidebarExpanded" class="text-sm whitespace-nowrap animate-fade-in">
+              {{ item.label }}
+            </span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Footer del Sidebar (Info del Estudiante) -->
+    <div class="p-4 border-t border-base-200 min-h-[5rem] flex items-center justify-center">
+      <div *ngIf="isSidebarExpanded" class="w-full animate-fade-in">
+        <p class="text-xs text-base-content/60 font-semibold mb-1">Usuario: <span class="text-primary">{{usuarioActual?.email}}</span></p>
+        <p class="text-[10px] text-base-content/50 font-bold uppercase leading-tight">
+          {{usuarioActual?.nombreCompleto}} 
+        </p>
+      </div>
+      <!-- Icono de usuario genérico cuando está colapsado -->
+      <div *ngIf="!isSidebarExpanded" class="avatar placeholder cursor-pointer">
+        <div class="bg-base-300 text-base-content rounded-full w-10">
+          <span class="material-symbols-outlined">person</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================== -->
+  <!-- CONTENIDO PRINCIPAL (DERECHA)              -->
+  <!-- ========================================== -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    
+    <!-- Navbar Superior -->
+    <header class="bg-base-100 h-16 shadow-sm flex items-center px-4 z-10">
+      
+      <!-- Botón Hamburger / Toggle -->
+      <button class="btn btn-ghost btn-circle text-primary" (click)="toggleSidebar()">
+        <!-- Cambia el ícono dependiendo del estado -->
+        <span class="material-symbols-outlined text-2xl">
+          {{ isSidebarExpanded ? 'menu_open' : 'menu' }}
+        </span>
+      </button>
+
+      <!-- Puedes agregar aquí perfil, notificaciones, etc. a la derecha del Navbar -->
+      <div class="ml-auto flex items-center gap-4">
+        <button class="btn btn-ghost btn-circle">
+          <span class="material-symbols-outlined">notifications</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Área de Renderizado de Vistas (Scrollable) -->
+    <main class="flex-1 overflow-y-auto p-6 md:p-8">
+      
+      <!-- Aquí es donde Angular inyectará los componentes hijos según la ruta -->
+      <router-outlet></router-outlet>
+      
+    </main>
+  </div>
+</div>

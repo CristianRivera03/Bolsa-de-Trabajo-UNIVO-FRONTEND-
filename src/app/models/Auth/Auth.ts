@@ -1,12 +1,13 @@
 
-export interface Login {
+export interface LoginDTO {
     email: string;
     password: string;
 }
 
-export interface Session {
+export interface SessionDTO {
     usuarioId: number;
     email: string;
     rolName: string;
+    nombreCompleto: string;
     token: string;
 }
