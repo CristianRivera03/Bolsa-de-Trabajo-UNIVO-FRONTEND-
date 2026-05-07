@@ -10,14 +10,10 @@ import { AlumnoService } from '../../services/Alumnos/alumno.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './sign-up.component.html',
-  styleUrls: ['./sign-up.component.scss']
 })
 export class SignUpComponent {
   
-  // Controla qué parte del formulario se muestra
   pasoActual: number = 1; 
-  
-  // Guardará la información que devuelva el backend
   datosAlumno: AlumnoActivo | null = null; 
 
   private alumnoService = inject(AlumnoService);
@@ -80,8 +76,6 @@ export class SignUpComponent {
       next: (response) => {
         this.isLoading = false;
         if (response.status) {
-          // Opcional: Podrías guardar el token aquí si es necesario
-          // y redirigir directamente al dashboard, o mandarlo a login
           this.router.navigate(['/login']);
         } else {
           this.errorMessage = response.msg || 'Error al registrar al alumno.';

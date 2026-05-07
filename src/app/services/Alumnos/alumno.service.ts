@@ -4,7 +4,7 @@ import { environment } from '../../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { AlumnoActivo , VerificarAlumno , RegistroEstudiante } from '../../models/Alumnos/alumno';
 import { ResponseAPI } from '../../models/response-api';
-import { SessionDTO , LoginDTO } from '../../models/Auth/Auth';
+import { SessionDTO  } from '../../models/Auth/Auth';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,7 @@ import { SessionDTO , LoginDTO } from '../../models/Auth/Auth';
 export class AlumnoService {
 
   private http = inject(HttpClient);
-  private apiUrl = environment.endpoint + 'Alumno/';
+  private apiUrl = environment.endpoint + '/Alumno/';
 
   constructor() { }
 
