@@ -8,7 +8,7 @@ import { SessionDTO } from '../../models/Auth/Auth';
 
 @Component({
   selector: 'app-crear-oferta',
-  standalone: true, // Agregado si estás usando Angular 14+ con standalone components
+  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './crear-oferta.component.html',
 })
@@ -18,7 +18,6 @@ export class CrearOfertaComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
   
-  // Variable para guardar la sesión activa
   sesionActual: SessionDTO | null = null;
 
   private ofertaService = inject(OfertaLaboralService);
@@ -26,7 +25,7 @@ export class CrearOfertaComponent implements OnInit {
 
   constructor(private fb: FormBuilder) {
     this.ofertaForm = this.fb.group({
-      // Eliminamos empresaId de aquí, ya no es un control del formulario
+      empresaId : this.sesionActual ? this.sesionActual.usuarioId : null,
       titulo: ['', Validators.required],
       descripcion: ['', [Validators.required, Validators.minLength(20)]],
       requisitos: ['', Validators.required],
@@ -39,12 +38,10 @@ export class CrearOfertaComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Recuperamos la sesión del LocalStorage al cargar el componente
-    const sesionStr = localStorage.getItem('sesionUsuario'); // Asegúrate de usar la llave correcta
+    const sesionStr = localStorage.getItem('userSession'); // Asegúrate de usar la llave correcta
     if (sesionStr) {
       this.sesionActual = JSON.parse(sesionStr) as SessionDTO;
     } else {
-      // Si no hay sesión, lo devolvemos al login por seguridad
       this.router.navigate(['/login']);
     }
   }
@@ -67,16 +64,18 @@ export class CrearOfertaComponent implements OnInit {
 
       const formValues = this.ofertaForm.value;
       
-      // Armamos el modelo inyectando el ID directamente desde la sesión
       const modeloEnvio: OfertaLaboralCreate = {
         ...formValues,
-        // OJO AQUÍ: Explicación crítica más abajo sobre este campo
         empresaId: this.sesionActual.usuarioId, 
         
         modalidadId: Number(formValues.modalidadId),
         salarioMin: formValues.salarioMin ? Number(formValues.salarioMin) : null,
         salarioMax: formValues.salarioMax ? Number(formValues.salarioMax) : null
       };
+
+      console.log("Sesion actual completa: ", this.sesionActual);
+      console.log("Modelo a enviar: ", modeloEnvio);
+
 
       this.ofertaService.crear(modeloEnvio).subscribe({
         next: (res) => {
@@ -97,7 +96,7 @@ export class CrearOfertaComponent implements OnInit {
     } else {
       this.ofertaForm.markAllAsTouched();
       if (!this.sesionActual) {
-         this.errorMessage = 'No se encontró una sesión activa.';
+        this.errorMessage = 'No se encontró una sesión activa.';
       }
     }
   }

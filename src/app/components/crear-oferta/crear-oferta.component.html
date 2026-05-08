@@ -22,10 +22,7 @@
 
       <form [formGroup]="ofertaForm" (ngSubmit)="publicarOferta()" class="grid grid-cols-1 md:grid-cols-2 gap-6">
         
-        <div class="form-control md:col-span-2 bg-warning/10 p-4 rounded-xl border border-warning/30">
-          <label class="label py-0 mb-1"><span class="label-text text-xs font-bold text-warning-content">Modo Prueba: ID de Empresa (Borrar cuando haya Login)</span></label>
-          <input formControlName="empresaId" type="number" class="input input-sm input-bordered w-32" />
-        </div>
+
 
         <div class="form-control md:col-span-2">
           <label class="label py-1"><span class="label-text font-bold text-xs">Título del Puesto <span class="text-error">*</span></span></label>

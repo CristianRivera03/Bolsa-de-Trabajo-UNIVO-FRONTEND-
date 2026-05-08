@@ -5,6 +5,8 @@ import { LayoutComponent } from './components/layout/layout.component';
 import { HomeComponent } from './components/home/home.component';
 import { SignUpEnterpriseComponent } from './components/sign-up-enterprise/sign-up-enterprise.component';
 import { CrearOfertaComponent } from './components/crear-oferta/crear-oferta.component';
+import { authGuard , empresaGuard } from './guards/auth.guard'; // Ajusta la ruta
+
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
@@ -15,10 +17,12 @@ export const routes: Routes = [
     {
         path: 'dashboard',
         component: LayoutComponent,
+        canActivate: [authGuard],
         children: [
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },
-            { path: 'crear-oferta', component: CrearOfertaComponent }
+            { path: 'crear-oferta', component: CrearOfertaComponent, 
+            canActivate: [empresaGuard] }
         ]
     },
 ];

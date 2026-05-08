@@ -1,63 +1,49 @@
-import { Component } from '@angular/core';
+// Agregamos OnInit a los imports
+import { Component, OnInit, inject } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
+import { OfertaLaboralService } from '../../services/OfertasLaborales/oferta-laboral.service';
+import { OfertaLaboral } from '../../models/OfertasLaborales/oferta-laboral';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './home.component.html',
 })
-export class HomeComponent {
-  
-  // Simulamos los datos que vendrán de tu API
-  ofertas = [
-    {
-      id: 1,
-      titulo: 'Desarrollador Backend .NET Core',
-      empresa: 'Nauterra',
-      ubicacion: 'San Salvador / Remoto',
-      modalidad: 'Remoto',
-      salario: '$1,200 - $1,500',
-      fechaPublicacion: 'Hace 2 días',
-      logo: 'https://ui-avatars.com/api/?name=Nauterra&background=10406d&color=fff' // Usa tu primary color
-    },
-    {
-      id: 2,
-      titulo: 'Frontend Developer (Angular 19)',
-      empresa: 'Nauterra',
-      ubicacion: 'Planta La Unión, El Salvador',
-      modalidad: 'Híbrido',
-      salario: '$1,000 - $1,300',
-      fechaPublicacion: 'Hace 5 días',
-      logo: 'https://ui-avatars.com/api/?name=Nauterra&background=10406d&color=fff'
-    },
-    {
-      id: 3,
-      titulo: 'Analista de Seguridad (AppSec)',
-      empresa: 'Nauterra',
-      ubicacion: 'Planta La Unión, El Salvador',
-      modalidad: 'Presencial',
-      salario: '$1,500 - $2,000',
-      fechaPublicacion: 'Hoy',
-      logo: 'https://ui-avatars.com/api/?name=Nauterra&background=10406d&color=fff'
-    },
-    {
-      id: 4,
-      titulo: 'Pasante de Sistemas y Automatización',
-      empresa: 'Nauterra',
-      ubicacion: 'San Miguel / La Unión',
-      modalidad: 'Híbrido',
-      salario: '$400',
-      fechaPublicacion: 'Hace 1 semana',
-      logo: 'https://ui-avatars.com/api/?name=Nauterra&background=10406d&color=fff'
-    }
-  ];
+// Implementamos OnInit
+export class HomeComponent implements OnInit { 
+  ofertas: OfertaLaboral[] = [];
+  private ofertaLaboralService = inject(OfertaLaboralService);
+
+  // Este método se ejecuta automáticamente al cargar el componente
+  ngOnInit(): void {
+    this.loadPosts();
+  }
+
+  loadPosts() {
+    // Asegúrate de que el método en tu servicio se llame 'lista' o 'obtenerTodos'
+    this.ofertaLaboralService.lista().subscribe({
+      next: (res) => {
+        if (res.status) {
+          console.log("Ofertas cargadas:", res.value);
+          this.ofertas = res.value;
+        }
+      },
+      error: (err) => {
+        console.error("Error al cargar las ofertas", err);
+      }
+    });
+  }
 
   getModalidadClass(modalidad: string): string {
-    switch (modalidad) {
+    // Es importante que el string coincida exactamente con lo que viene de la DB
+    if (!modalidad) return 'badge-ghost';
+    
+    switch (modalidad.trim()) {
       case 'Remoto': return 'badge-info text-info-content';
-      case 'Híbrido': return 'badge-secondary text-secondary-content'; // Tu color mostaza
-      case 'Presencial': return 'badge-primary text-primary-content'; // Tu color azul
+      case 'Híbrido': return 'badge-secondary text-secondary-content';
+      case 'Presencial': return 'badge-primary text-primary-content'; 
       default: return 'badge-ghost';
     }
   }

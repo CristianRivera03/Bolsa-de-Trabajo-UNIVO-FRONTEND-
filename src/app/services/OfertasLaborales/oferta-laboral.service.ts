@@ -11,7 +11,7 @@ import { OfertaLaboral, OfertaLaboralUpdate, OfertaLaboralCreate } from '../../m
 export class OfertaLaboralService {
 
   private http = inject(HttpClient);
-  private apiUrl = environment.endpoint + 'OfertaLaboral/';
+  private apiUrl = environment.endpoint + '/OfertaLaboral/';
 
   constructor() { }
 
