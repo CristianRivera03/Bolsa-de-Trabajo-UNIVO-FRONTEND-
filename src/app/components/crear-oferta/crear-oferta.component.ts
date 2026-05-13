@@ -38,7 +38,7 @@ export class CrearOfertaComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const sesionStr = localStorage.getItem('userSession'); // Asegúrate de usar la llave correcta
+    const sesionStr = localStorage.getItem('userSession'); 
     if (sesionStr) {
       this.sesionActual = JSON.parse(sesionStr) as SessionDTO;
     } else {

@@ -22,21 +22,19 @@
 
       <form [formGroup]="ofertaForm" (ngSubmit)="publicarOferta()" class="grid grid-cols-1 md:grid-cols-2 gap-6">
         
-
-
         <div class="form-control md:col-span-2">
-          <label class="label py-1"><span class="label-text font-bold text-xs">Título del Puesto <span class="text-error">*</span></span></label>
-          <input formControlName="titulo" type="text" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="Ej. Desarrollador Angular Senior" />
+          <label for="titulo" class="label py-1"><span class="label-text font-bold text-xs">Título del Puesto <span class="text-error">*</span></span></label>
+          <input id="titulo" formControlName="titulo" type="text" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="Ej. Desarrollador Angular Senior" title="Título del Puesto" />
         </div>
 
         <div class="form-control">
-          <label class="label py-1"><span class="label-text font-bold text-xs">Ubicación <span class="text-error">*</span></span></label>
-          <input formControlName="ubicacion" type="text" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="Ej. San Miguel, El Salvador" />
+          <label for="ubicacion" class="label py-1"><span class="label-text font-bold text-xs">Ubicación <span class="text-error">*</span></span></label>
+          <input id="ubicacion" formControlName="ubicacion" type="text" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="Ej. San Miguel, El Salvador" title="Ubicación de la oferta" />
         </div>
 
         <div class="form-control">
-          <label class="label py-1"><span class="label-text font-bold text-xs">Modalidad <span class="text-error">*</span></span></label>
-          <select formControlName="modalidadId" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50">
+          <label for="modalidadId" class="label py-1"><span class="label-text font-bold text-xs">Modalidad <span class="text-error">*</span></span></label>
+          <select id="modalidadId" formControlName="modalidadId" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" title="Seleccione la modalidad de trabajo">
             <option value="" disabled selected>Seleccione una opción</option>
             <option value="1">Presencial</option>
             <option value="2">Remoto</option>
@@ -45,35 +43,43 @@
         </div>
 
         <div class="form-control md:col-span-2">
-          <label class="label py-1"><span class="label-text font-bold text-xs">Descripción del Puesto <span class="text-error">*</span></span></label>
-          <textarea formControlName="descripcion" class="textarea textarea-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 h-32" placeholder="Describe las responsabilidades, el equipo y la misión del rol..."></textarea>
+          <label for="descripcion" class="label py-1 flex justify-between">
+            <span class="label-text font-bold text-xs">Descripción del Puesto <span class="text-error">*</span></span>
+            <span class="label-text-alt text-base-content/50">Mín. 20 caracteres</span>
+          </label>
+          <textarea id="descripcion" formControlName="descripcion" minlength="20" class="textarea textarea-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 h-32" [class.textarea-error]="ofertaForm.get('descripcion')?.touched && ofertaForm.get('descripcion')?.invalid" placeholder="Describe las responsabilidades, el equipo y la misión del rol..." title="Descripción detallada del puesto"></textarea>
+          <label class="label py-0 mt-1" *ngIf="ofertaForm.get('descripcion')?.touched && ofertaForm.get('descripcion')?.hasError('minlength')">
+            <span class="label-text-alt text-error">
+              Te faltan {{ 20 - (ofertaForm.get('descripcion')?.value?.length || 0) }} caracteres.
+            </span>
+          </label>
         </div>
 
         <div class="form-control md:col-span-2">
-          <label class="label py-1"><span class="label-text font-bold text-xs">Requisitos (Habilidades, Experiencia) <span class="text-error">*</span></span></label>
-          <textarea formControlName="requisitos" class="textarea textarea-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 h-24" placeholder="Ej. - 3 años de experiencia en .NET..."></textarea>
+          <label for="requisitos" class="label py-1"><span class="label-text font-bold text-xs">Requisitos (Habilidades, Experiencia) <span class="text-error">*</span></span></label>
+          <textarea id="requisitos" formControlName="requisitos" class="textarea textarea-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 h-24" placeholder="Ej. - 3 años de experiencia en .NET..." title="Requisitos del puesto"></textarea>
         </div>
 
         <div class="form-control">
-          <label class="label py-1"><span class="label-text font-bold text-xs">Salario Mínimo (USD)</span></label>
-          <input formControlName="salarioMin" type="number" step="0.01" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="Ej. 600.00" />
+          <label for="salarioMin" class="label py-1"><span class="label-text font-bold text-xs">Salario Mínimo (USD) <span class="text-error">*</span></span></label>
+          <input id="salarioMin" formControlName="salarioMin" type="number" step="0.01" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="Ej. 600.00" title="Salario Mínimo" />
         </div>
 
         <div class="form-control">
-          <label class="label py-1"><span class="label-text font-bold text-xs">Salario Máximo (USD)</span></label>
-          <input formControlName="salarioMax" type="number" step="0.01" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="Ej. 1000.00" />
+          <label for="salarioMax" class="label py-1"><span class="label-text font-bold text-xs">Salario Máximo (USD) <span class="text-error">*</span></span></label>
+          <input id="salarioMax" formControlName="salarioMax" type="number" step="0.01" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="Ej. 1000.00" title="Salario Máximo" />
           <label *ngIf="ofertaForm.hasError('rangoInvalido')" class="label py-1">
             <span class="label-text-alt text-error">El máximo debe ser mayor al mínimo</span>
           </label>
         </div>
 
         <div class="form-control md:col-span-2">
-          <label class="label py-1"><span class="label-text font-bold text-xs">Fecha de Expiración (Opcional)</span></label>
-          <input formControlName="fechaExpiracion" type="date" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 w-full md:w-1/2" />
+          <label for="fechaExpiracion" class="label py-1"><span class="label-text font-bold text-xs">Fecha de Expiración <span class="text-error">*</span></span></label>
+          <input id="fechaExpiracion" formControlName="fechaExpiracion" type="date" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 w-full md:w-1/2" title="Fecha límite para aplicar" />
         </div>
 
         <div class="md:col-span-2 mt-6 flex justify-end gap-4 border-t border-base-200 pt-6">
-          <button type="button" class="btn btn-ghost rounded-xl">Cancelar</button>
+          <button type="button" class="btn btn-ghost rounded-xl" routerLink="/dashboard/home">Cancelar</button>
           <button type="submit" class="btn btn-primary rounded-xl px-8 shadow-lg shadow-primary/30" [disabled]="ofertaForm.invalid || isLoading">
             <span *ngIf="isLoading" class="loading loading-spinner"></span>
             Publicar Vacante

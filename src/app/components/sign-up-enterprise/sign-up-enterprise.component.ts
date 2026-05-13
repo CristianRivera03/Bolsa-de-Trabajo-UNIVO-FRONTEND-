@@ -13,7 +13,7 @@ import { EmpresaCreateDTO } from '../../models/Empresa/empresa';
 @Component({
   selector: 'app-sign-up-enterprise',
   standalone: true,
-  imports: [ ReactiveFormsModule],
+  imports: [ ReactiveFormsModule , CommonModule ],
   templateUrl: './sign-up-enterprise.component.html',
 })
 export class SignUpEnterpriseComponent {
