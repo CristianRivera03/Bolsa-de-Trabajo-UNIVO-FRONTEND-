@@ -107,7 +107,7 @@
           Perfil {{ usuarioActual?.rolName }}
         </div>
       </div>
-      
+
       <!-- Puedes agregar aquí perfil, notificaciones, etc. a la derecha del Navbar -->
       <div class="ml-auto flex items-center gap-4">
         <button class="btn btn-ghost btn-circle">
@@ -116,10 +116,9 @@
       </div>
     </header>
 
-    <!-- Área de Renderizado de Vistas (Scrollable) -->
+    <!-- Contenedor del contenido principal -->
     <main class="flex-1 overflow-y-auto p-6 md:p-8">
       
-      <!-- Aquí es donde Angular inyectará los componentes hijos según la ruta -->
       <router-outlet></router-outlet>
       
     </main>
