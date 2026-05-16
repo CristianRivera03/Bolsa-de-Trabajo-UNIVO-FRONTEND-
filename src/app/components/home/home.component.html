@@ -3,11 +3,6 @@
 
 <div class="animate-fade-in p-8">
   
- 
-
-  <!-- ========================================== -->
-  <!-- SECCIÓN DE FILTROS                         -->
-  <!-- ========================================== -->
   <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
     <h2 class="text-xl font-bold text-base-content flex items-center gap-2">
       <span class="material-symbols-outlined text-primary">work</span>
@@ -31,7 +26,7 @@
   <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-8">
     
     <!-- Iteración de Ofertas con Angular -->
-    <div *ngFor="let oferta of ofertas" class="card bg-base-100 shadow-md border border-base-200 hover:border-primary/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+    <div *ngFor="let oferta of ofertas" (click)="verDetalle(oferta.id)" class="card bg-base-100 shadow-md border border-base-200 hover:border-primary/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
       
       <div class="card-body p-6">
         
@@ -74,12 +69,46 @@
         </div>
 
 
+        <!-- Carreras relacionadas -->
+
+          <div class="mt-3">
+  <div class="flex flex-wrap items-center gap-2">
+    <span class="material-symbols-outlined text-[18px] text-base-content/60" title="Carreras admitidas">
+      school
+    </span>
+
+    @for (carrera of oferta.carreras; track $index) {
+      <span class="badge badge-primary badge-outline border-primary/30 text-[10px] font-bold px-2 py-3 rounded-md uppercase tracking-tighter">
+        {{ carrera }}
+      </span>
+    } @empty {
+      <span class="text-[11px] text-primary/90 italic">
+        Abierto a todas las especialidades
+      </span>
+    }
+  </div>
+</div>
+
+
+
         <!-- Footer de la Tarjeta -->
-        <div class="card-actions justify-between items-center mt-6 pt-4 border-t border-base-200">
-          <span class="text-[11px] text-base-content/50 font-medium flex items-center gap-1">
+        <div class="card-actions justify-between items-center mt-4  border-t border-base-200">
+
+          <div class="flex flex-col md:flex-row gap-4">
+
+            <span class="text-[11px] text-base-content/50 font-medium flex items-center gap-1">
             <span class="material-symbols-outlined text-[14px]">schedule</span>
-            {{ oferta.fechaPublicacion | date:'mediumDate' }}
+              Fecha de Publicacion |  {{ oferta.fechaPublicacion | date:'mediumDate' }}
           </span>
+
+          <span class="text-[11px] text-base-content/50 font-medium flex items-center gap-1">
+            <span class="material-symbols-outlined text-[14px]">calendar_check</span>
+              Fecha de Expiracion |  {{ oferta.fechaExpiracion | date:'mediumDate' }}
+          </span>
+          </div>
+
+          
+
           <button class="btn btn-sm btn-outline btn-primary rounded-lg px-4 opacity-0 group-hover:opacity-100 transition-opacity">
             Ver Detalles
           </button>

@@ -23,4 +23,8 @@ export class OfertaLaboralService {
   crear(model : OfertaLaboralCreate): Observable<ResponseAPI<OfertaLaboral>> {
     return this.http.post<ResponseAPI<OfertaLaboral>>(`${this.apiUrl}crear`, model);
   }
+
+  obtenerPorId(id: number): Observable<ResponseAPI<OfertaLaboral>> {
+    return this.http.get<ResponseAPI<OfertaLaboral>>(`${this.apiUrl}${id}`);
+  }
 }

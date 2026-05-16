@@ -1,0 +1,145 @@
+<div class="container mx-auto p-4 max-w-4xl animate-fade-in">
+  
+  <div class="flex items-center gap-4 mb-8">
+    <div class="avatar">
+      <div class="w-20 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+        <img src="https://ui-avatars.com/api/?name=C+R&background=0D8ABC&color=fff" alt="Avatar" />
+      </div>
+    </div>
+    <div>
+      <h1 class="text-3xl font-bold text-base-content">Mi Currículum Digital</h1>
+      <p class="text-base-content/70">Mantén tu información actualizada para atraer a las mejores empresas.</p>
+    </div>
+  </div>
+
+  <form [formGroup]="perfilForm" (ngSubmit)="guardarPerfil()" class="space-y-6">
+    
+    <div class="card bg-base-100 shadow-sm border border-base-200">
+      <div class="card-body">
+        <h2 class="card-title text-primary border-b pb-2"><span class="material-symbols-outlined">person</span> Datos Personales</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+          <div class="form-control">
+            <label class="label"><span class="label-text font-medium">Nombres</span></label>
+            <input type="text" formControlName="nombres" class="input input-bordered w-full" />
+          </div>
+          <div class="form-control">
+            <label class="label"><span class="label-text font-medium">Apellidos</span></label>
+            <input type="text" formControlName="apellidos" class="input input-bordered w-full" />
+          </div>
+          <div class="form-control">
+            <label class="label"><span class="label-text font-medium">Teléfono de Contacto</span></label>
+            <input type="tel" formControlName="telefono" class="input input-bordered w-full" placeholder="Ej: 7777-8888" />
+          </div>
+          <div class="form-control">
+            <label class="label"><span class="label-text font-medium">Nivel de Inglés</span></label>
+            <select formControlName="nivelIngles" class="select select-bordered w-full">
+              <option value="Básico">Básico</option>
+              <option value="Intermedio">Intermedio</option>
+              <option value="Avanzado">Avanzado</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 shadow-sm border border-base-200">
+      <div class="card-body">
+        <h2 class="card-title text-primary border-b pb-2"><span class="material-symbols-outlined">school</span> Formación Académica</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+          <div class="form-control col-span-full">
+            <label class="label"><span class="label-text font-medium">Institución</span></label>
+            <input type="text" formControlName="universidad" class="input input-bordered w-full bg-base-200" readonly />
+          </div>
+          <div class="form-control">
+            <label class="label"><span class="label-text font-medium">Carrera</span></label>
+            <select formControlName="carreraId" class="select select-bordered w-full">
+              <option value="4">Ingeniería en Desarrollo de Software</option>
+              <option value="5">Ingeniería Industrial</option>
+              <option value="6">Licenciatura en Administración</option>
+            </select>
+          </div>
+          <div class="form-control">
+            <label class="label"><span class="label-text font-medium">Estado Académico</span></label>
+            <select formControlName="anioEstudio" class="select select-bordered w-full">
+              <option value="1er Año">1er Año</option>
+              <option value="2do Año">2do Año</option>
+              <option value="3er Año">3er Año</option>
+              <option value="4to Año">4to Año</option>
+              <option value="5to Año">5to Año</option>
+              <option value="Egresado">Egresado</option>
+              <option value="Graduado">Graduado</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 shadow-sm border border-base-200">
+      <div class="card-body">
+        <h2 class="card-title text-primary border-b pb-2"><span class="material-symbols-outlined">work</span> Experiencia y Enlaces Profesionales</h2>
+        
+        <div class="grid grid-cols-1 gap-4 mt-2">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">Habilidades Técnicas y Blandas</span>
+              <span class="label-text-alt opacity-70">Separadas por comas</span>
+            </label>
+            <input type="text" formControlName="habilidades" class="input input-bordered w-full" placeholder="Ej: C#, Angular, Trabajo en equipo..." />
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">Experiencia Previa / Pasantías</span>
+            </label>
+            <textarea formControlName="experienciaPrevia" class="textarea textarea-bordered h-24" placeholder="Describe brevemente tus roles anteriores o pasantías..."></textarea>
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">Resumen Profesional (Sobre mí)</span>
+            </label>
+            <textarea formControlName="sobreMi" class="textarea textarea-bordered h-24" placeholder="Un breve resumen de tu perfil para los reclutadores..."></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="form-control">
+              <label class="label"><span class="label-text font-medium">URL de LinkedIn</span></label>
+              <input type="url" formControlName="enlaceLinkedIn" class="input input-bordered w-full" placeholder="https://linkedin.com/in/tu-perfil" />
+            </div>
+            <div class="form-control">
+              <label class="label"><span class="label-text font-medium">URL de GitHub / Portafolio</span></label>
+              <input type="url" formControlName="enlaceGitHub" class="input input-bordered w-full" placeholder="https://github.com/tu-usuario" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card bg-base-200 shadow-inner border border-base-300">
+      <div class="card-body">
+        <h2 class="card-title text-secondary border-b border-base-300 pb-2"><span class="material-symbols-outlined">picture_as_pdf</span> Adjuntar CV Tradicional</h2>
+        <p class="text-sm text-base-content/70">Algunas empresas prefieren descargar tu currículum en formato PDF.</p>
+        
+        <div class="form-control w-full max-w-md mt-2">
+          <input type="file" (change)="onFileSelected($event)" accept="application/pdf" class="file-input file-input-bordered file-input-primary w-full" />
+          <label class="label">
+            <span class="label-text-alt text-base-content/60">Tamaño máximo: 5MB. Solo formato PDF.</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-4 pb-10">
+      <button type="submit" class="btn btn-primary w-48 shadow-lg" [disabled]="isLoading || perfilForm.invalid">
+        @if(isLoading) {
+          <span class="loading loading-spinner"></span> Guardando...
+        } @else {
+          Guardar Perfil
+        }
+      </button>
+    </div>
+
+  </form>
+</div>

@@ -1,4 +1,4 @@
-export interface CalalogDTO {
+export interface CatalogDTO {
     id: number;
     nombre: string;
 }

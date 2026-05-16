@@ -1,9 +1,9 @@
-// Agregamos OnInit a los imports
 import { Component, OnInit, inject } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
 import { OfertaLaboralService } from '../../services/OfertasLaborales/oferta-laboral.service';
 import { OfertaLaboral } from '../../models/OfertasLaborales/oferta-laboral';
 import { ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -36,6 +36,8 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  private router = inject(Router);
+
   getModalidadClass(modalidad: string): string {
     // Es importante que el string coincida exactamente con lo que viene de la DB
     if (!modalidad) return 'badge-ghost';
@@ -46,5 +48,9 @@ export class HomeComponent implements OnInit {
       case 'Presencial': return 'badge-primary text-primary-content'; 
       default: return 'badge-ghost';
     }
+  }
+
+  verDetalle(id: number) {
+    this.router.navigate(['/dashboard/oferta', id]);
   }
 }

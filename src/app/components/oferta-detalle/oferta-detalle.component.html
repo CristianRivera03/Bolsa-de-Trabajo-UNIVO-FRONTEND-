@@ -1,0 +1,143 @@
+@if (isLoading) {
+  <div class="flex justify-center items-center min-h-[60vh]">
+    <span class="loading loading-spinner loading-lg text-primary"></span>
+  </div>
+} @else if (oferta) {
+  <div class="container mx-auto px-4 py-8 max-w-6xl animate-fade-in">
+    
+    <button (click)="volver()" class="btn btn-ghost btn-sm mb-6 text-base-content/70 hover:bg-base-200">
+      <span class="material-symbols-outlined text-lg">arrow_back</span>
+      Volver al listado
+    </button>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <div class="lg:col-span-2 space-y-8">
+        
+        <div>
+          <h1 class="text-3xl md:text-4xl font-bold text-primary mb-3">{{ oferta.titulo }}</h1>
+          
+          <div class="flex flex-wrap items-center gap-4 text-sm text-base-content/70">
+            <span class="flex items-center gap-1 bg-base-200 px-3 py-1 rounded-full">
+              <span class="material-symbols-outlined text-[16px]">location_on</span>
+              {{ oferta.municipioNombre || oferta.ubicacion }}
+            </span>
+            <span class="flex items-center gap-1 bg-base-200 px-3 py-1 rounded-full">
+              <span class="material-symbols-outlined text-[16px]">work</span>
+              {{ oferta.modalidadNombre }}
+            </span>
+            <span class="flex items-center gap-1 bg-success/10 text-success px-3 py-1 rounded-full font-semibold">
+              <span class="material-symbols-outlined text-[16px]">payments</span>
+              {{ oferta.salarioMin ? '$' + oferta.salarioMin + ' - $' + oferta.salarioMax : 'Salario a convenir' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="bg-base-100 rounded-xl p-5 grid grid-cols-2 md:grid-cols-4 gap-4 shadow-sm border border-base-200">
+          <div>
+            <span class="block text-xs font-bold text-base-content/50 uppercase tracking-wider mb-1">Vacantes</span>
+            <span class="font-medium text-base-content flex items-center gap-1">
+              <span class="material-symbols-outlined text-[16px] text-primary">group</span>
+              {{ oferta.vacantes || 1 }} disponibles
+            </span>
+          </div>
+          <div>
+            <span class="block text-xs font-bold text-base-content/50 uppercase tracking-wider mb-1">Contrato</span>
+            <span class="font-medium text-base-content">{{ oferta.tipoContratoNombre || 'No especificado' }}</span>
+          </div>
+          <div>
+            <span class="block text-xs font-bold text-base-content/50 uppercase tracking-wider mb-1">Rango de Edad</span>
+            <span class="font-medium text-base-content">
+              {{ oferta.edadMin ? oferta.edadMin + ' a ' + oferta.edadMax + ' años' : 'Indiferente' }}
+            </span>
+          </div>
+          <div>
+            <span class="block text-xs font-bold text-base-content/50 uppercase tracking-wider mb-1">Género</span>
+            <span class="font-medium text-base-content">{{ oferta.generoNombre || 'Indiferente' }}</span>
+          </div>
+          <div class="md:col-span-2 mt-2 md:mt-0">
+            <span class="block text-xs font-bold text-base-content/50 uppercase tracking-wider mb-1">Licencia / Vehículo</span>
+            <span class="font-medium text-base-content">
+              {{ oferta.licenciaNombre || 'No requiere licencia' }} 
+              <span class="text-base-content/50 font-normal">({{ oferta.tieneVehiculo ? 'Requiere vehículo propio' : 'Sin vehículo propio' }})</span>
+            </span>
+          </div>
+        </div>
+
+        @if (oferta.carreras && oferta.carreras.length > 0) {
+          <div>
+            <h2 class="text-xl font-bold text-primary mb-3">Especialidades Requeridas</h2>
+            <div class="flex flex-wrap gap-2">
+              @for (carrera of oferta.carreras; track $index) {
+                <span class="badge badge-secondary badge-outline">{{ carrera }}</span>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="prose max-w-none text-base-content/80">
+          <h2 class="text-xl font-bold text-primary border-b border-base-200 pb-2 mb-4">Descripción del Puesto</h2>
+          <p class="whitespace-pre-line leading-relaxed">{{ oferta.descripcion }}</p>
+          
+          @if (oferta.requisitos) {
+            <h2 class="text-xl font-bold text-primary border-b border-base-200 pb-2 mb-4 mt-8">Requisitos Adicionales</h2>
+            <p class="whitespace-pre-line leading-relaxed">{{ oferta.requisitos }}</p>
+          }
+        </div>
+
+      </div>
+
+      <div class="space-y-6">
+        
+        <div class="card bg-base-100 shadow-xl border border-base-200 sticky top-24">
+          <div class="card-body">
+            
+            <div class="flex flex-col items-center text-center mb-2">
+              <div class="avatar placeholder mb-3">
+                <div class="bg-primary text-primary-content rounded-xl w-20 shadow-md">
+                  <span class="text-3xl">{{ oferta.empresaNombre.charAt(0) }}</span>
+                </div>
+              </div>
+              <h3 class="font-bold text-xl leading-tight">{{ oferta.empresaNombre }}</h3>
+              <span class="text-xs badge badge-ghost mt-2 border-primary/20">Empresa Verificada</span>
+            </div>
+
+            <div class="divider my-2"></div>
+
+            <ul class="text-sm space-y-3 my-2">
+              <li class="flex justify-between items-center">
+                <span class="text-base-content/60 flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">calendar_today</span> Publicado:</span>
+                <span class="font-medium">{{ oferta.fechaPublicacion | date:'dd MMM, yyyy' }}</span>
+              </li>
+              <li class="flex justify-between items-center">
+                <span class="text-base-content/60 flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">event_busy</span> Vence:</span>
+                <span class="font-medium text-error">{{ oferta.fechaExpiracion ? (oferta.fechaExpiracion | date:'dd MMM, yyyy') : 'Sin fecha' }}</span>
+              </li>
+            </ul>
+
+            <div class="mt-4">
+              <button (click)="aplicar()" class="btn btn-secondary w-full text-secondary-content shadow-md hover:shadow-lg transition-all text-base">
+                Aplicar ahora
+              </button>
+              <p class="text-[11px] text-center text-base-content/50 mt-3 leading-tight">
+                Al aplicar, la empresa recibirá tu perfil profesional y datos de contacto de forma segura.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+} @else {
+  <div class="hero min-h-[50vh] bg-base-200 rounded-2xl mt-8">
+    <div class="hero-content text-center">
+      <div class="max-w-md">
+        <span class="material-symbols-outlined text-6xl text-error mb-4">work_history</span>
+        <h1 class="text-3xl font-bold">Oferta no encontrada</h1>
+        <p class="py-4 text-base-content/70">La oferta que buscas ya no está disponible, ha expirado o el enlace es incorrecto.</p>
+        <button (click)="volver()" class="btn btn-primary">Volver al portal</button>
+      </div>
+    </div>
+  </div>
+}
