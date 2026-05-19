@@ -9,6 +9,8 @@ import { authGuard , empresaGuard } from './guards/auth.guard';
 import { OfertaDetalleComponent } from './components/oferta-detalle/oferta-detalle.component';
 import { PerfilEstudianteComponent } from './components/perfil-estudiante/perfil-estudiante.component';
 
+import { PerfilEmpresaComponent } from './components/perfil-empresa/perfil-empresa.component';
+
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
@@ -24,7 +26,8 @@ export const routes: Routes = [
             { path: 'crear-oferta', component: CrearOfertaComponent, 
             canActivate: [empresaGuard] },
             { path: 'oferta/:id', component: OfertaDetalleComponent },
-            { path: 'perfil-estudiante', component: PerfilEstudianteComponent }
+            { path: 'perfil-estudiante', component: PerfilEstudianteComponent },
+            { path: 'perfil-empresa', component: PerfilEmpresaComponent, canActivate: [empresaGuard] }
         ]
     },
 ];

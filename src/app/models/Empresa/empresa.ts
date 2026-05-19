@@ -3,6 +3,7 @@ export interface EmpresaDTO {
   usuarioId: number;
   nombreComercial: string;
   sector: string;
+  descripcion?: string;
   sitioWeb?: string; 
   logoUrl?: string;
 }
@@ -12,12 +13,14 @@ export interface EmpresaCreateDTO {
   password: string;
   nombreComercial: string;
   sector: string;
+  descripcion?: string;
   sitioWeb?: string;
 }
 
 export interface EmpresaUpdateDTO {
   nombreComercial: string;
   sector: string;
+  descripcion?: string;
   sitioWeb?: string;
   logoUrl?: string;
 }

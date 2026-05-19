@@ -1,10 +1,14 @@
 <div class="container mx-auto p-4 max-w-4xl animate-fade-in">
   
   <div class="flex items-center gap-4 mb-8">
-    <div class="avatar">
-      <div class="w-20 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-        <img src="https://ui-avatars.com/api/?name=C+R&background=0D8ABC&color=fff" alt="Avatar" />
+    <div class="avatar relative group cursor-pointer" (click)="fotoInput.click()">
+      <div class="w-20 h-20 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
+        <img [src]="fotoUrl" alt="Avatar" class="object-cover w-full h-full" />
+        <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <span class="material-symbols-outlined text-white">photo_camera</span>
+        </div>
       </div>
+      <input #fotoInput type="file" class="hidden" accept="image/jpeg, image/png, image/webp" (change)="onFotoSelected($event)">
     </div>
     <div>
       <h1 class="text-3xl font-bold text-base-content">Mi Currículum Digital</h1>
@@ -29,15 +33,31 @@
           </div>
           <div class="form-control">
             <label class="label"><span class="label-text font-medium">Teléfono de Contacto</span></label>
-            <input type="tel" formControlName="telefono" class="input input-bordered w-full" placeholder="Ej: 7777-8888" />
+            <input type="tel" formControlName="telefono" class="input input-bordered w-full" placeholder="Ej: 77778888" />
           </div>
           <div class="form-control">
-            <label class="label"><span class="label-text font-medium">Nivel de Inglés</span></label>
-            <select formControlName="nivelIngles" class="select select-bordered w-full">
-              <option value="Básico">Básico</option>
-              <option value="Intermedio">Intermedio</option>
-              <option value="Avanzado">Avanzado</option>
+            <label class="label"><span class="label-text font-medium">Nivel de Idioma (Inglés)</span></label>
+            <select formControlName="nivelIdiomaId" class="select select-bordered w-full">
+              <option value="" disabled>Seleccione nivel...</option>
+              @for (nivel of nivelesIdioma; track nivel.id) {
+                <option [value]="nivel.id">{{ nivel.nombre }}</option>
+              }
             </select>
+          </div>
+          
+          <div class="form-control col-span-full">
+            <label class="label"><span class="label-text font-medium">Dirección de Residencia</span></label>
+            <input type="text" formControlName="direccion" class="input input-bordered w-full" placeholder="Ej: Barrio San Francisco, San Miguel..." />
+          </div>
+
+          <div class="form-control col-span-full mt-2 p-4 bg-base-200 rounded-lg">
+            <label class="cursor-pointer label justify-start gap-4">
+              <input type="checkbox" formControlName="buscaEmpleo" class="toggle toggle-primary toggle-lg" />
+              <div>
+                <span class="label-text font-bold block text-lg">Disponibilidad Laboral</span>
+                <span class="label-text-alt text-base-content/70">Activa esto si estás buscando empleo o pasantías activamente.</span>
+              </div>
+            </label>
           </div>
         </div>
       </div>
@@ -55,21 +75,19 @@
           <div class="form-control">
             <label class="label"><span class="label-text font-medium">Carrera</span></label>
             <select formControlName="carreraId" class="select select-bordered w-full">
-              <option value="4">Ingeniería en Desarrollo de Software</option>
-              <option value="5">Ingeniería Industrial</option>
-              <option value="6">Licenciatura en Administración</option>
+              <option value="" disabled>Seleccione carrera...</option>
+              @for (carrera of carreras; track carrera.id) {
+                <option [value]="carrera.id">{{ carrera.nombre }}</option>
+              }
             </select>
           </div>
           <div class="form-control">
             <label class="label"><span class="label-text font-medium">Estado Académico</span></label>
-            <select formControlName="anioEstudio" class="select select-bordered w-full">
-              <option value="1er Año">1er Año</option>
-              <option value="2do Año">2do Año</option>
-              <option value="3er Año">3er Año</option>
-              <option value="4to Año">4to Año</option>
-              <option value="5to Año">5to Año</option>
-              <option value="Egresado">Egresado</option>
-              <option value="Graduado">Graduado</option>
+            <select formControlName="gradoAcademicoId" class="select select-bordered w-full">
+              <option value="" disabled>Seleccione estado...</option>
+              @for (grado of gradosAcademicos; track grado.id) {
+                <option [value]="grado.id">{{ grado.nombre }}</option>
+              }
             </select>
           </div>
         </div>
@@ -113,20 +131,6 @@
               <input type="url" formControlName="enlaceGitHub" class="input input-bordered w-full" placeholder="https://github.com/tu-usuario" />
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card bg-base-200 shadow-inner border border-base-300">
-      <div class="card-body">
-        <h2 class="card-title text-secondary border-b border-base-300 pb-2"><span class="material-symbols-outlined">picture_as_pdf</span> Adjuntar CV Tradicional</h2>
-        <p class="text-sm text-base-content/70">Algunas empresas prefieren descargar tu currículum en formato PDF.</p>
-        
-        <div class="form-control w-full max-w-md mt-2">
-          <input type="file" (change)="onFileSelected($event)" accept="application/pdf" class="file-input file-input-bordered file-input-primary w-full" />
-          <label class="label">
-            <span class="label-text-alt text-base-content/60">Tamaño máximo: 5MB. Solo formato PDF.</span>
-          </label>
         </div>
       </div>
     </div>
