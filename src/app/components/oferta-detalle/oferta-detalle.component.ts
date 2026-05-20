@@ -1,17 +1,25 @@
-import { Component, OnInit, inject } from '@angular/core'; 
+import { Component, OnInit, inject, ViewChild } from '@angular/core'; 
 import { CommonModule, Location } from '@angular/common';
 import { OfertaLaboralService } from '../../services/OfertasLaborales/oferta-laboral.service';
 import { OfertaLaboral } from '../../models/OfertasLaborales/oferta-laboral';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+
+import {ModalPostulacionComponent} from '../modals/postulacion-modal/postulacion-modal.component'; // <-- Ajusta la ruta a donde guardaste tu modal
+
 @Component({
   selector: 'app-oferta-detalle',
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  standalone: true, // Asegúrate de que sea standalone
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule, 
+    RouterModule, 
+    ModalPostulacionComponent // 2. AÑADIR A LOS IMPORTS
+  ],
   templateUrl: './oferta-detalle.component.html'
 })
 export class OfertaDetalleComponent implements OnInit {
 
-  //Inicializacion de variables
   oferta: OfertaLaboral | null = null;
   private ofertaLaboralService = inject(OfertaLaboralService);
   private route = inject(ActivatedRoute);
@@ -19,7 +27,8 @@ export class OfertaDetalleComponent implements OnInit {
   private location = inject(Location);
   isLoading = true;
 
-  
+  // 3. CAPTURAR EL MODAL CON VIEWCHILD
+  @ViewChild(ModalPostulacionComponent) modalPostulacion!: ModalPostulacionComponent;
 
   ngOnInit(): void {
     this.loadOferta();
@@ -46,11 +55,13 @@ export class OfertaDetalleComponent implements OnInit {
   }
 
   volver() {
-    this.location.back(); // Regresa a la página anterior en el historial del navegador
+    this.location.back();
   }
 
+  // 4. ABRIR EL MODAL AL DAR CLIC EN APLICAR
   aplicar() {
-    console.log(`Aplicando a la oferta ID: ${this.oferta?.id}`);
+    if (this.oferta) {
+      this.modalPostulacion.abrir(this.oferta.id, this.oferta.titulo);
+    }
   }
-
 }

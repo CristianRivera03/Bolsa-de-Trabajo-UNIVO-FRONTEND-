@@ -1,0 +1,47 @@
+<dialog id="modal_postulacion" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box sm:w-11/12 sm:max-w-md bg-base-100">
+    
+    <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" (click)="cerrar()">✕</button>
+
+    <h3 class="font-bold text-xl text-primary border-b pb-2 mb-4 flex items-center gap-2">
+      <span class="material-symbols-outlined">send</span>
+      Postularme a Vacante
+    </h3>
+
+    <div class="bg-base-200 p-3 rounded-lg mb-4">
+      <p class="text-sm text-base-content/70">Aplicando para el puesto de:</p>
+      <p class="font-bold text-base-content">{{ tituloOfertaActual }}</p>
+    </div>
+
+    <form [formGroup]="postulacionForm" (ngSubmit)="aplicar()">
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text font-medium">Mensaje de presentación</span>
+        </label>
+        <textarea formControlName="mensaje" class="textarea textarea-bordered h-32 leading-tight" 
+                  placeholder="Escribe un breve mensaje destacando por qué eres el candidato ideal para este puesto..."></textarea>
+        <label class="label">
+          <span class="label-text-alt text-base-content/60">
+            Tu currículum digital de la universidad se adjuntará automáticamente a esta postulación.
+          </span>
+        </label>
+      </div>
+
+      <div class="modal-action mt-4 border-t pt-4">
+        <button type="button" class="btn btn-ghost" (click)="cerrar()" [disabled]="isLoading">Cancelar</button>
+        <button type="submit" class="btn btn-primary min-w-[120px]" [disabled]="postulacionForm.invalid || isLoading">
+          @if (isLoading) {
+            <span class="loading loading-spinner loading-sm"></span> Enviando...
+          } @else {
+            <span class="material-symbols-outlined text-[20px]">check_circle</span> Enviar Postulación
+          }
+        </button>
+      </div>
+
+    </form>
+  </div>
+  
+  <form method="dialog" class="modal-backdrop">
+    <button (click)="cerrar()">cerrar</button>
+  </form>
+</dialog>

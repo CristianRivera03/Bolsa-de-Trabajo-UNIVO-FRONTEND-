@@ -1,0 +1,60 @@
+<dialog id="modal_idioma" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box sm:w-11/12 sm:max-w-md bg-base-100">
+    
+    <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" (click)="cerrar()">✕</button>
+
+    <h3 class="font-bold text-xl text-primary border-b pb-2 mb-4 flex items-center gap-2">
+      <span class="material-symbols-outlined">language</span>
+      @if (idiomaIdActual) {
+        Actualizar Nivel de Idioma
+      } @else {
+        Agregar Nuevo Idioma
+      }
+    </h3>
+
+    <form [formGroup]="idiomaForm" (ngSubmit)="guardar()">
+      <div class="flex flex-col gap-4">
+        
+        <div class="form-control">
+          <label class="label"><span class="label-text font-medium">Idioma</span></label>
+          <select formControlName="idioma" class="select select-bordered w-full">
+            <option value="" disabled>Seleccione el idioma...</option>
+            @for (lang of listaIdiomas; track lang) {
+              <option [value]="lang">{{ lang }}</option>
+            }
+          </select>
+          @if (idiomaForm.get('idioma')?.disabled) {
+            <span class="label-text-alt text-base-content/60 mt-1">El idioma no se puede cambiar, solo su nivel.</span>
+          }
+        </div>
+
+        <div class="form-control">
+          <label class="label"><span class="label-text font-medium">Nivel de Dominio</span></label>
+          <select formControlName="nivelId" class="select select-bordered w-full">
+            <option value="" disabled>Seleccione su nivel...</option>
+            @for (nivel of nivelesIdioma; track nivel.id) {
+              <option [value]="nivel.id">{{ nivel.nombre }}</option>
+            }
+          </select>
+        </div>
+
+      </div>
+
+      <div class="modal-action mt-6 border-t pt-4">
+        <button type="button" class="btn btn-ghost" (click)="cerrar()" [disabled]="isLoading">Cancelar</button>
+        <button type="submit" class="btn btn-primary min-w-[120px]" [disabled]="idiomaForm.invalid || isLoading">
+          @if (isLoading) {
+            <span class="loading loading-spinner loading-sm"></span> Guardando...
+          } @else {
+            <span class="material-symbols-outlined text-[20px]">save</span> Guardar
+          }
+        </button>
+      </div>
+
+    </form>
+  </div>
+  
+  <form method="dialog" class="modal-backdrop">
+    <button (click)="cerrar()">cerrar</button>
+  </form>
+</dialog>

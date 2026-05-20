@@ -1,0 +1,83 @@
+<dialog id="modal_educacion" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box sm:w-11/12 sm:max-w-2xl bg-base-100">
+    
+    <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" (click)="cerrar()">✕</button>
+
+    <h3 class="font-bold text-xl text-primary border-b pb-2 mb-4 flex items-center gap-2">
+      <span class="material-symbols-outlined">school</span>
+      @if (educacionIdActual) {
+        Editar Educación
+      } @else {
+        Agregar Educación
+      }
+    </h3>
+
+    <form [formGroup]="educacionForm" (ngSubmit)="guardar()">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <div class="form-control md:col-span-2">
+          <label class="label"><span class="label-text font-medium">Institución Educativa</span></label>
+          <input type="text" formControlName="institucion" class="input input-bordered w-full" placeholder="Ej. Universidad de Oriente (UNIVO)" />
+        </div>
+
+        <div class="form-control md:col-span-2">
+          <label class="label"><span class="label-text font-medium">Título Obtenido / Carrera</span></label>
+          <input type="text" formControlName="tituloObtenido" class="input input-bordered w-full" placeholder="Ej. Ingeniería en Desarrollo de Software" />
+        </div>
+
+        <div class="form-control">
+          <label class="label"><span class="label-text font-medium">Grado Académico</span></label>
+          <select formControlName="gradoAcademicoId" class="select select-bordered w-full">
+            <option value="" disabled>Seleccione grado...</option>
+            @for (grado of gradosAcademicos; track grado.id) {
+              <option [value]="grado.id">{{ grado.nombre }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-control">
+          <label class="label"><span class="label-text font-medium">Estado</span></label>
+          <select formControlName="estado" class="select select-bordered w-full">
+            <option value="" disabled>Seleccione estado...</option>
+            <option value="En curso">En curso</option>
+            <option value="Pausado">Pausado</option>
+            <option value="Egresado">Egresado</option>
+            <option value="Graduado">Graduado</option>
+          </select>
+        </div>
+
+        <div class="form-control">
+          <label class="label"><span class="label-text font-medium">Fecha de Inicio</span></label>
+          <input type="date" formControlName="fechaInicio" class="input input-bordered w-full" />
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Fecha de Fin</span>
+            <span class="label-text-alt text-base-content/60">(Opcional)</span>
+          </label>
+          <input type="date" formControlName="fechaFin" class="input input-bordered w-full" />
+        </div>
+
+      </div>
+
+      <div class="modal-action mt-6 border-t pt-4">
+        <button type="button" class="btn btn-ghost" (click)="cerrar()" [disabled]="isLoading">Cancelar</button>
+        
+        <button type="submit" class="btn btn-primary min-w-[120px]" [disabled]="educacionForm.invalid || isLoading">
+          @if (isLoading) {
+            <span class="loading loading-spinner loading-sm"></span> Guardando...
+          } @else {
+            <span class="material-symbols-outlined text-[20px]">save</span> Guardar
+          }
+        </button>
+      </div>
+
+    </form>
+  </div>
+  
+  <form method="dialog" class="modal-backdrop">
+    <button (click)="cerrar()">cerrar</button>
+  </form>
+</dialog>

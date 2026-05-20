@@ -55,4 +55,8 @@ export class CatalogosService {
     return this.http.get<ResponseAPI<CatalogDTO[]>>(`${this.apiUrl}generos`);
   }
 
+  obtenerHabilidades(): Observable<ResponseAPI<CatalogDTO[]>> {
+    return this.http.get<ResponseAPI<CatalogDTO[]>>(`${this.apiUrl}habilidades`);
+  }
+
 }

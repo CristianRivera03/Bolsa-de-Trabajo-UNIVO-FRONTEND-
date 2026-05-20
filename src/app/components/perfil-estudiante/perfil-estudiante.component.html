@@ -1,149 +1,242 @@
-<div class="container mx-auto p-4 max-w-4xl animate-fade-in">
+<div class="container mx-auto p-4 max-w-5xl animate-fade-in">
   
-  <div class="flex items-center gap-4 mb-8">
+  <div class="flex flex-col md:flex-row items-center gap-6 mb-8 bg-base-100 p-6 rounded-box shadow-sm border border-base-200">
     <div class="avatar relative group cursor-pointer" (click)="fotoInput.click()">
-      <div class="w-20 h-20 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
+      <div class="w-24 h-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
         <img [src]="fotoUrl" alt="Avatar" class="object-cover w-full h-full" />
-        <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+        <div class="rounded-full absolute inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
           <span class="material-symbols-outlined text-white">photo_camera</span>
         </div>
       </div>
       <input #fotoInput type="file" class="hidden" accept="image/jpeg, image/png, image/webp" (change)="onFotoSelected($event)">
     </div>
+    <div class="text-center md:text-left flex-1">
+      <h1 class="text-3xl font-bold text-base-content">{{ perfilCompleto.nombres }} {{ perfilCompleto.apellidos }}</h1>
+      <p class="text-base-content/70 text-lg">{{ perfilCompleto.carreraNombre }}</p>
+      <div class="badge badge-primary mt-2">Carnet: {{ perfilCompleto.carnet }}</div>
+    </div>
     <div>
-      <h1 class="text-3xl font-bold text-base-content">Mi Currículum Digital</h1>
-      <p class="text-base-content/70">Mantén tu información actualizada para atraer a las mejores empresas.</p>
+      <div>
+  <button class="btn btn-outline btn-primary shadow-sm min-w-[170px]" 
+          type="button" 
+          (click)="descargarCV()" 
+          [disabled]="isDownloadingCv">
+    
+    @if (isDownloadingCv) {
+      <span class="loading loading-spinner"></span> Generando PDF...
+    } @else {
+      <span class="material-symbols-outlined">download</span> Generar CV PDF
+    }
+    
+  </button>
+</div>
     </div>
   </div>
 
-  <form [formGroup]="perfilForm" (ngSubmit)="guardarPerfil()" class="space-y-6">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     
-    <div class="card bg-base-100 shadow-sm border border-base-200">
-      <div class="card-body">
-        <h2 class="card-title text-primary border-b pb-2"><span class="material-symbols-outlined">person</span> Datos Personales</h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+    <div class="lg:col-span-1 space-y-6">
+      <form [formGroup]="perfilForm" (ngSubmit)="guardarPerfil()" class="card bg-base-100 shadow-sm border border-base-200">
+        <div class="card-body p-5">
+          <h2 class="card-title text-primary border-b pb-2 text-lg"><span class="material-symbols-outlined">person</span> Información Básica</h2>
+          
           <div class="form-control">
-            <label class="label"><span class="label-text font-medium">Nombres</span></label>
-            <input type="text" formControlName="nombres" class="input input-bordered w-full" />
-          </div>
-          <div class="form-control">
-            <label class="label"><span class="label-text font-medium">Apellidos</span></label>
-            <input type="text" formControlName="apellidos" class="input input-bordered w-full" />
-          </div>
-          <div class="form-control">
-            <label class="label"><span class="label-text font-medium">Teléfono de Contacto</span></label>
-            <input type="tel" formControlName="telefono" class="input input-bordered w-full" placeholder="Ej: 77778888" />
-          </div>
-          <div class="form-control">
-            <label class="label"><span class="label-text font-medium">Nivel de Idioma (Inglés)</span></label>
-            <select formControlName="nivelIdiomaId" class="select select-bordered w-full">
-              <option value="" disabled>Seleccione nivel...</option>
-              @for (nivel of nivelesIdioma; track nivel.id) {
-                <option [value]="nivel.id">{{ nivel.nombre }}</option>
-              }
-            </select>
+            <!-- Agregamos for="nombres" -->
+            <label class="label" for="nombres"><span class="label-text font-medium">Nombres</span></label>
+            <!-- Agregamos id="nombres" -->
+            <input type="text" id="nombres" formControlName="nombres" class="input input-bordered input-sm w-full" />
           </div>
           
-          <div class="form-control col-span-full">
-            <label class="label"><span class="label-text font-medium">Dirección de Residencia</span></label>
-            <input type="text" formControlName="direccion" class="input input-bordered w-full" placeholder="Ej: Barrio San Francisco, San Miguel..." />
-          </div>
-
-          <div class="form-control col-span-full mt-2 p-4 bg-base-200 rounded-lg">
-            <label class="cursor-pointer label justify-start gap-4">
-              <input type="checkbox" formControlName="buscaEmpleo" class="toggle toggle-primary toggle-lg" />
-              <div>
-                <span class="label-text font-bold block text-lg">Disponibilidad Laboral</span>
-                <span class="label-text-alt text-base-content/70">Activa esto si estás buscando empleo o pasantías activamente.</span>
-              </div>
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card bg-base-100 shadow-sm border border-base-200">
-      <div class="card-body">
-        <h2 class="card-title text-primary border-b pb-2"><span class="material-symbols-outlined">school</span> Formación Académica</h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-          <div class="form-control col-span-full">
-            <label class="label"><span class="label-text font-medium">Institución</span></label>
-            <input type="text" formControlName="universidad" class="input input-bordered w-full bg-base-200" readonly />
-          </div>
           <div class="form-control">
-            <label class="label"><span class="label-text font-medium">Carrera</span></label>
-            <select formControlName="carreraId" class="select select-bordered w-full">
-              <option value="" disabled>Seleccione carrera...</option>
+            <label class="label" for="apellidos"><span class="label-text font-medium">Apellidos</span></label>
+            <input type="text" id="apellidos" formControlName="apellidos" class="input input-bordered input-sm w-full" />
+          </div>
+
+          <div class="form-control">
+            <label class="label" for="telefono"><span class="label-text font-medium">Teléfono</span></label>
+            <input type="tel" id="telefono" formControlName="telefono" class="input input-bordered input-sm w-full" />
+          </div>
+
+          <div class="form-control">
+            <label class="label" for="carrera"><span class="label-text font-medium">Carrera</span></label>
+            <!-- Agregamos id="carrera" y aria-label para asegurar 100% de accesibilidad en el select -->
+            <select id="carrera" formControlName="carreraId" class="select select-bordered select-sm w-full" aria-label="Seleccione carrera">
+              <option value="" disabled selected>Seleccione carrera...</option>
               @for (carrera of carreras; track carrera.id) {
                 <option [value]="carrera.id">{{ carrera.nombre }}</option>
               }
             </select>
           </div>
+
           <div class="form-control">
-            <label class="label"><span class="label-text font-medium">Estado Académico</span></label>
-            <select formControlName="gradoAcademicoId" class="select select-bordered w-full">
-              <option value="" disabled>Seleccione estado...</option>
-              @for (grado of gradosAcademicos; track grado.id) {
-                <option [value]="grado.id">{{ grado.nombre }}</option>
-              }
-            </select>
+            <label class="label" for="direccion"><span class="label-text font-medium">Dirección</span></label>
+            <input type="text" id="direccion" formControlName="direccion" class="input input-bordered input-sm w-full" />
           </div>
+
+          <div class="form-control mt-2 p-3 bg-base-200 rounded-lg">
+            <label class="cursor-pointer label justify-between" for="buscaEmpleo">
+              <span class="label-text font-bold">Busca Empleo</span>
+              <input type="checkbox" id="buscaEmpleo" formControlName="buscaEmpleo" class="toggle toggle-primary" />
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-sm mt-4 w-full" [disabled]="isLoading || perfilForm.invalid">
+            Guardar Básicos
+          </button>
         </div>
-      </div>
+      </form>
+
+      <form [formGroup]="perfilForm" (ngSubmit)="guardarPerfil()" class="card bg-base-100 shadow-sm border border-base-200">
+        <div class="card-body p-5">
+          <h2 class="card-title text-primary border-b pb-2 text-lg"><span class="material-symbols-outlined">link</span> Perfil Profesional</h2>
+          
+          <div class="form-control">
+            <label class="label" for="sobreMi"><span class="label-text font-medium">Sobre Mí</span></label>
+            <textarea id="sobreMi" formControlName="sobreMi" class="textarea textarea-bordered h-24 leading-tight"></textarea>
+          </div>
+
+          <div class="form-control">
+            <label class="label" for="enlaceLinkedIn"><span class="label-text font-medium">LinkedIn</span></label>
+            <input type="url" id="enlaceLinkedIn" formControlName="enlaceLinkedIn" class="input input-bordered input-sm w-full" />
+          </div>
+
+          <div class="form-control">
+            <label class="label" for="enlaceGitHub"><span class="label-text font-medium">GitHub</span></label>
+            <input type="url" id="enlaceGitHub" formControlName="enlaceGitHub" class="input input-bordered input-sm w-full" />
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-sm mt-4 w-full">Guardar Perfil</button>
+        </div>
+      </form>
     </div>
 
-    <div class="card bg-base-100 shadow-sm border border-base-200">
-      <div class="card-body">
-        <h2 class="card-title text-primary border-b pb-2"><span class="material-symbols-outlined">work</span> Experiencia y Enlaces Profesionales</h2>
+    <div class="lg:col-span-2 space-y-6">
+      
+      <div class="card bg-base-100 shadow-sm border border-base-200">
+        <div class="card-body p-5">
+          <div class="flex justify-between items-center border-b pb-2 mb-4">
+            <h2 class="card-title text-primary m-0"><span class="material-symbols-outlined">school</span> Educación</h2>
+            <button type="button" class="btn btn-sm btn-outline btn-primary" (click)="gestionarEducacion()">+ Agregar</button>
+          </div>
+          
+          @for (edu of perfilCompleto.educaciones; track edu.id) {
+            <div class="flex justify-between items-start border-b last:border-0 py-3">
+              <div>
+                <h3 class="font-bold text-base-content">{{ edu.tituloObtenido }}</h3>
+                <p class="text-sm text-base-content/70">{{ edu.institucion }} | {{ edu.gradoAcademicoNombre }}</p>
+                <span class="text-xs text-base-content/50">{{ edu.fechaInicio | date:'yyyy' }} - {{ edu.fechaFin ? (edu.fechaFin | date:'yyyy') : 'Actual' }}</span>
+              </div>
+              <div class="flex gap-2">
+                <button class="btn btn-xs btn-ghost text-info" (click)="gestionarEducacion(edu)">Editar</button>
+                <button class="btn btn-xs btn-ghost text-error" (click)="eliminarEducacion(edu.id)">Eliminar</button>
+              </div>
+            </div>
+          } @empty {
+            <p class="text-center text-sm text-base-content/50 py-4">No hay educación registrada.</p>
+          }
+        </div>
+      </div>
+
+      <div class="card bg-base-100 shadow-sm border border-base-200">
+        <div class="card-body p-5">
+          <div class="flex justify-between items-center border-b pb-2 mb-4">
+            <h2 class="card-title text-primary m-0"><span class="material-symbols-outlined">work</span> Experiencia Laboral</h2>
+            <button type="button" class="btn btn-sm btn-outline btn-primary" (click)="gestionarExperiencia()">+ Agregar</button>
+          </div>
+
+          @for (exp of perfilCompleto.experienciasLaborales; track exp.id) {
+            <div class="flex justify-between items-start border-b last:border-0 py-3">
+              <div class="flex-1 pr-4">
+                <h3 class="font-bold text-base-content">{{ exp.cargo }}</h3>
+                <p class="text-sm text-base-content/70 font-medium">{{ exp.empresa }}</p>
+                <span class="text-xs text-base-content/50 block mb-1">{{ exp.fechaInicio | date:'MMM yyyy' }} - {{ exp.esTrabajoActual ? 'Actualidad' : (exp.fechaFin | date:'MMM yyyy') }}</span>
+                <p class="text-sm text-base-content/80 text-justify leading-snug">{{ exp.descripcionPuesto }}</p>
+              </div>
+              <div class="flex flex-col gap-2">
+                <button class="btn btn-xs btn-ghost text-info" (click)="gestionarExperiencia(exp)">Editar</button>
+                <button class="btn btn-xs btn-ghost text-error" (click)="eliminarExperiencia(exp.id)">Eliminar</button>
+              </div>
+            </div>
+          } @empty {
+            <p class="text-center text-sm text-base-content/50 py-4">No hay experiencia registrada.</p>
+          }
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         
-        <div class="grid grid-cols-1 gap-4 mt-2">
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">Habilidades Técnicas y Blandas</span>
-              <span class="label-text-alt opacity-70">Separadas por comas</span>
-            </label>
-            <input type="text" formControlName="habilidades" class="input input-bordered w-full" placeholder="Ej: C#, Angular, Trabajo en equipo..." />
-          </div>
-
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">Experiencia Previa / Pasantías</span>
-            </label>
-            <textarea formControlName="experienciaPrevia" class="textarea textarea-bordered h-24" placeholder="Describe brevemente tus roles anteriores o pasantías..."></textarea>
-          </div>
-
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">Resumen Profesional (Sobre mí)</span>
-            </label>
-            <textarea formControlName="sobreMi" class="textarea textarea-bordered h-24" placeholder="Un breve resumen de tu perfil para los reclutadores..."></textarea>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="form-control">
-              <label class="label"><span class="label-text font-medium">URL de LinkedIn</span></label>
-              <input type="url" formControlName="enlaceLinkedIn" class="input input-bordered w-full" placeholder="https://linkedin.com/in/tu-perfil" />
+        <div class="card bg-base-100 shadow-sm border border-base-200">
+          <div class="card-body p-5">
+            <div class="flex justify-between items-center border-b pb-2 mb-4">
+              <h2 class="card-title text-primary text-base m-0"><span class="material-symbols-outlined">bolt</span> Habilidades</h2>
+              <button type="button" class="btn btn-xs btn-outline btn-primary" (click)="gestionarHabilidad()">+ Agregar</button>
             </div>
-            <div class="form-control">
-              <label class="label"><span class="label-text font-medium">URL de GitHub / Portafolio</span></label>
-              <input type="url" formControlName="enlaceGitHub" class="input input-bordered w-full" placeholder="https://github.com/tu-usuario" />
+            <div class="flex flex-wrap gap-2">
+              @for (hab of perfilCompleto.habilidades; track hab.habilidadId) {
+                <div class="badge badge-primary badge-outline gap-2 p-5 ">
+                  {{ hab.nombreHabilidad }}
+                  <span class="material-symbols-outlined text-[14px] cursor-pointer hover:text-error" (click)="eliminarHabilidad(hab.habilidadId)">close</span>
+                </div>
+              }
             </div>
           </div>
         </div>
+
+        <div class="card bg-base-100 shadow-sm border border-base-200">
+          <div class="card-body p-5">
+            <div class="flex justify-between items-center border-b pb-2 mb-4">
+              <h2 class="card-title text-primary text-base m-0"><span class="material-symbols-outlined">language</span> Idiomas</h2>
+              <button type="button" class="btn btn-xs btn-outline btn-primary" (click)="gestionarIdioma()">+ Agregar</button>
+            </div>
+            <ul class="space-y-2">
+              @for (idioma of perfilCompleto.idiomas; track idioma.id) {
+                <li class="flex justify-between items-center bg-base-200 px-3 py-1 rounded-md text-sm">
+                  <span><strong class="text-base-content">{{ idioma.idioma }}</strong> ({{ idioma.nivelNombre }})</span>
+                  <button class="btn btn-xs btn-circle btn-ghost text-error" (click)="eliminarIdioma(idioma.id)">
+                    <span class="material-symbols-outlined text-[16px]">delete</span>
+                  </button>
+                </li>
+              }
+            </ul>
+          </div>
+        </div>
+
       </div>
-    </div>
 
-    <div class="flex justify-end gap-4 pb-10">
-      <button type="submit" class="btn btn-primary w-48 shadow-lg" [disabled]="isLoading || perfilForm.invalid">
-        @if(isLoading) {
-          <span class="loading loading-spinner"></span> Guardando...
-        } @else {
-          Guardar Perfil
-        }
-      </button>
-    </div>
+      <div class="card bg-base-100 shadow-sm border border-base-200">
+        <div class="card-body p-5">
+          <div class="flex justify-between items-center border-b pb-2 mb-4">
+            <h2 class="card-title text-primary m-0"><span class="material-symbols-outlined">team_dashboard</span> Proyectos Destacados</h2>
+            <button type="button" class="btn btn-sm btn-outline btn-primary" (click)="gestionarProyecto()">+ Agregar</button>
+          </div>
 
-  </form>
+          @for (proy of perfilCompleto.proyectos; track proy.id) {
+            <div class="flex justify-between items-start border-b last:border-0 py-3">
+              <div class="flex-1 pr-4">
+                <h3 class="font-bold text-base-content">{{ proy.nombre }}</h3>
+                <p class="text-xs font-semibold text-secondary mb-1">{{ proy.tecnologiasUsadas }}</p>
+                <p class="text-sm text-base-content/80 line-clamp-2">{{ proy.descripcion }}</p>
+                @if(proy.enlaceRepositorio) {
+                  <a [href]="proy.enlaceRepositorio" target="_blank" class="text-xs text-primary hover:underline mt-1 inline-block">Ver Repositorio</a>
+                }
+              </div>
+              <div class="flex gap-2">
+                <button class="btn btn-xs btn-ghost text-info" (click)="gestionarProyecto(proy)">Editar</button>
+                <button class="btn btn-xs btn-ghost text-error" (click)="eliminarProyecto(proy.id)">Eliminar</button>
+              </div>
+            </div>
+          } @empty {
+            <p class="text-center text-sm text-base-content/50 py-4">No hay proyectos registrados.</p>
+          }
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
+
+<app-modal-educacion (guardadoExitoso)="recargarPerfil()"></app-modal-educacion>
+<app-modal-experiencia (guardadoExitoso)="recargarPerfil()"></app-modal-experiencia>
+<app-modal-habilidad (guardadoExitoso)="recargarPerfil()"></app-modal-habilidad>
+<app-modal-idioma (guardadoExitoso)="recargarPerfil()"></app-modal-idioma>
+<app-modal-proyecto (guardadoExitoso)="recargarPerfil()"></app-modal-proyecto>

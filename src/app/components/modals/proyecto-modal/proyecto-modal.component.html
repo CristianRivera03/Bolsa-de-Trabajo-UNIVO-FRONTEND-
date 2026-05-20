@@ -1,0 +1,74 @@
+<dialog id="modal_proyecto" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box sm:w-11/12 sm:max-w-2xl bg-base-100">
+    
+    <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" (click)="cerrar()">✕</button>
+
+    <h3 class="font-bold text-xl text-primary border-b pb-2 mb-4 flex items-center gap-2">
+      <span class="material-symbols-outlined">code</span>
+      @if (proyectoIdActual) {
+        Editar Proyecto
+      } @else {
+        Agregar Proyecto
+      }
+    </h3>
+
+    <form [formGroup]="proyectoForm" (ngSubmit)="guardar()">
+      <div class="grid grid-cols-1 gap-4">
+        
+        <div class="form-control">
+          <label class="label"><span class="label-text font-medium">Nombre del Proyecto</span></label>
+          <input type="text" formControlName="nombre" class="input input-bordered w-full" placeholder="Ej. Sistema de Inventario 'InnSystem'" />
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Tecnologías Usadas</span>
+            <span class="label-text-alt opacity-70">Separadas por comas</span>
+          </label>
+          <input type="text" formControlName="tecnologiasUsadas" class="input input-bordered w-full" placeholder="Ej. C#, .NET 9, SQL Server, Angular" />
+        </div>
+
+        <div class="form-control">
+          <label class="label"><span class="label-text font-medium">Descripción y Logros del Proyecto</span></label>
+          <textarea formControlName="descripcion" class="textarea textarea-bordered h-28 leading-tight" 
+                    placeholder="¿Qué problema resuelve? ¿Cuál fue tu rol? ¿Qué aprendiste?"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">URL del Repositorio/Demo</span>
+              <span class="label-text-alt opacity-70">(Opcional)</span>
+            </label>
+            <input type="url" formControlName="enlaceRepositorio" class="input input-bordered w-full" placeholder="https://github.com/tu-usuario/proyecto" />
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">Fecha de Finalización</span>
+              <span class="label-text-alt opacity-70">(Opcional)</span>
+            </label>
+            <input type="date" formControlName="fechaProyecto" class="input input-bordered w-full" />
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-action mt-6 border-t pt-4">
+        <button type="button" class="btn btn-ghost" (click)="cerrar()" [disabled]="isLoading">Cancelar</button>
+        <button type="submit" class="btn btn-primary min-w-[120px]" [disabled]="proyectoForm.invalid || isLoading">
+          @if (isLoading) {
+            <span class="loading loading-spinner loading-sm"></span> Guardando...
+          } @else {
+            <span class="material-symbols-outlined text-[20px]">save</span> Guardar
+          }
+        </button>
+      </div>
+
+    </form>
+  </div>
+  
+  <form method="dialog" class="modal-backdrop">
+    <button (click)="cerrar()">cerrar</button>
+  </form>
+</dialog>

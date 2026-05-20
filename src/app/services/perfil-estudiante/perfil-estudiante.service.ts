@@ -23,4 +23,8 @@ export class PerfilEstudianteService {
   cambiarFoto(formData: FormData): Observable<ResponseAPI<string>> {
     return this.http.post<ResponseAPI<string>>(`${this.apiUrl}/CambiarFoto`, formData);
   }
+
+  descargarCV(): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/GenerarCV`, { responseType: 'blob' });
+  }
 }
