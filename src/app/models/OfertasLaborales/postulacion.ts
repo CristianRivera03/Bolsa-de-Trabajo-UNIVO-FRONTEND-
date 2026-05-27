@@ -3,6 +3,12 @@ export interface CreatePostulacionDTO {
   mensaje: string;
 }
 
+export interface EstudianteHabilidad {
+  habilidadId: number;
+  nombreHabilidad: string;
+  nivelDominio: number;
+}
+
 export interface PostulacionDTO {
   id: number;
   ofertaId: number;
@@ -13,5 +19,7 @@ export interface PostulacionDTO {
   fechaPostulacion: string;
   estadoNombre: string;
   mensaje: string;
-  curriculumUrl: string;
+  estudianteFotoUrl?: string;
+  empresaLogoUrl?: string;
+  estudianteHabilidades?: EstudianteHabilidad[];
 }

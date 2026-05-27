@@ -2,9 +2,16 @@
 
 <div class="flex h-screen bg-base-200 overflow-hidden font-sans">
 
+  <!-- Backdrop overlay for mobile screens when sidebar is expanded -->
+  <div *ngIf="isSidebarExpanded" 
+       (click)="toggleSidebar()" 
+       class="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm z-20 md:hidden transition-opacity duration-300">
+  </div>
+
   <aside 
-    class="bg-base-100 shadow-xl flex flex-col transition-all duration-300 ease-in-out z-20 relative"
-    [ngClass]="isSidebarExpanded ? 'w-64' : 'w-20'">
+    class="bg-base-100 shadow-xl flex flex-col transition-all duration-300 ease-in-out z-30 fixed md:relative h-full"
+    [ngClass]="isSidebarExpanded ? 'w-64 translate-x-0' : 'w-20 -translate-x-full md:translate-x-0'">
+    
     
     <div class="bg-primary h-16 flex items-center justify-center overflow-hidden transition-all duration-300">
   <div class="flex items-center justify-center w-full px-2">
@@ -35,8 +42,8 @@
     <nav class="flex-1 overflow-y-auto px-3">
       <ul class="space-y-1">
         <li *ngFor="let item of menuItems">
-          <!-- routerLinkActive te permite darle estilo al ítem seleccionado -->
           <a [routerLink]="item.route" 
+             (click)="onMenuItemClick()"
              routerLinkActive="bg-base-200 text-primary font-semibold border-l-4 border-primary"
              class="flex items-center px-3 py-3 rounded-lg text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors cursor-pointer group">
             

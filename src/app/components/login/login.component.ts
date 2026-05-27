@@ -2,14 +2,21 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
+import { NgIf } from '@angular/common';
 import { AuthService } from '../../services/Auth/auth.service';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterModule],
+  imports: [ReactiveFormsModule, RouterModule, NgIf],
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
+
+  showPassword = false;
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+  }
 
 
   private fb = inject(FormBuilder);

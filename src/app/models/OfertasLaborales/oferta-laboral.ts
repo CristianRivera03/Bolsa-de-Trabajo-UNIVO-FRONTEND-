@@ -1,3 +1,9 @@
+export interface OfertaHabilidad {
+  habilidadId: number;
+  nombreHabilidad: string;
+  esObligatorio: boolean;
+}
+
 export interface OfertaLaboral {
   id: number;
   titulo: string;
@@ -22,11 +28,12 @@ export interface OfertaLaboral {
   licenciaNombre?: string | null;
   tipoContratoId?: number | null;
   tipoContratoNombre?: string | null;
-  municipioId?: number | null;
-  municipioNombre?: string | null;
+  distritoId?: number | null;
+  distritoNombre?: string | null;
   generoId?: number | null;
   generoNombre?: string | null;
   carreras: string[];
+  habilidades?: OfertaHabilidad[];
 }
 
 export interface OfertaLaboralCreate {
@@ -45,9 +52,10 @@ export interface OfertaLaboralCreate {
   tieneVehiculo?: boolean | null;
   licenciaId?: number | null;
   tipoContratoId?: number | null;
-  municipioId?: number | null;
+  distritoId?: number | null;
   generoId?: number | null;
   carreraIds: number[]; 
+  habilidadIds?: number[];
 }
 
 export interface OfertaLaboralUpdate {
@@ -65,7 +73,8 @@ export interface OfertaLaboralUpdate {
   tieneVehiculo?: boolean | null;
   licenciaId?: number | null;
   tipoContratoId?: number | null;
-  municipioId?: number | null;
+  distritoId?: number | null;
   generoId?: number | null;
   carreraIds: number[]; 
+  habilidadIds?: number[];
 }

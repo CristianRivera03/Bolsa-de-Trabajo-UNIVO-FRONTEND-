@@ -20,17 +20,20 @@ export class LayoutComponent implements OnInit {
     if (sessionStr) {
       this.usuarioActual = JSON.parse(sessionStr);
     }
+    if (window.innerWidth < 768) {
+      this.isSidebarExpanded = false;
+    }
   }
 
 
   allMenuItems = [
     { icon: 'home', label: 'Inicio', route: '/dashboard/home' },
+    { icon: 'admin_panel_settings', label: 'Administración', route: '/dashboard/admin', roles: ['Administrador'] },
     { icon: 'add_home_work', label: 'Crear Oferta', route: '/dashboard/crear-oferta' , roles: ['Empresa'] },
-    { icon: 'person', label: 'Mi Perfil', route: '/dashboard/perfil-estudiante' },
-    { icon: 'work', label: 'Ofertas Laborales', route: '/dashboard/ofertas' },
-    { icon: 'assignment_turned_in', label: 'Mis Postulaciones', route: '/dashboard/postulaciones' },
-    { icon: 'business', label: 'Empresas Aliadas', route: '/dashboard/empresas' },
-    { icon: 'calendar_today', label: 'Entrevistas', route: '/dashboard/entrevistas' }
+    { icon: 'group', label: 'Postulantes', route: '/dashboard/postulantes' , roles: ['Empresa'] },
+    { icon: 'person', label: 'Mi Perfil', route: '/dashboard/perfil-estudiante' , roles: ['Estudiante'] },
+    { icon: 'person', label: 'Mi Perfil', route: '/dashboard/perfil-empresa' , roles: ['Empresa'] },
+    { icon: 'assignment_turned_in', label: 'Mis Postulaciones', route: '/dashboard/mis-postulaciones' , roles: ['Estudiante'] },
   ];
 
   get menuItems() {
@@ -47,5 +50,11 @@ export class LayoutComponent implements OnInit {
 
   toggleSidebar() {
     this.isSidebarExpanded = !this.isSidebarExpanded;
+  }
+
+  onMenuItemClick() {
+    if (window.innerWidth < 768) {
+      this.isSidebarExpanded = false;
+    }
   }
 }

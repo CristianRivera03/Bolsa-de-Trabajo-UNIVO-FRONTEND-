@@ -1,5 +1,4 @@
 <div class="p-6 md:p-10 max-w-4xl mx-auto animate-fade-in">
-  
   <div class="flex items-center gap-3 mb-8 border-b border-base-200 pb-4">
     <span class="material-symbols-outlined text-primary text-3xl">post_add</span>
     <div>
@@ -7,11 +6,9 @@
       <p class="text-xs text-base-content/60">Atrae al mejor talento de la Universidad de Oriente.</p>
     </div>
   </div>
-
   <div class="card bg-base-100 shadow-xl border border-base-200">
     <div class="card-body p-6 md:p-8">
-      
-      <div *ngIf="successMessage" class="alert alert-success bg-success/10 text-success-content border-none rounded-xl mb-6">
+      <div *ngIf="successMessage" class="alert bg-green-700 text-white border-none rounded-xl mb-6 shadow-md">
         <span class="material-symbols-outlined">check_circle</span>
         <span>{{ successMessage }}</span>
       </div>
@@ -19,20 +16,15 @@
         <span class="material-symbols-outlined">error</span>
         <span>{{ errorMessage }}</span>
       </div>
-
       <form [formGroup]="ofertaForm" (ngSubmit)="publicarOferta()" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        
-        <!-- Sección Principal -->
         <div class="form-control md:col-span-2 lg:col-span-3">
           <label for="titulo" class="label py-1"><span class="label-text font-bold text-xs">Título del Puesto <span class="text-error">*</span></span></label>
           <input id="titulo" formControlName="titulo" type="text" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="Ej. Desarrollador Angular Senior" />
         </div>
-
         <div class="form-control lg:col-span-2">
           <label for="ubicacion" class="label py-1"><span class="label-text font-bold text-xs">Dirección Detallada <span class="text-error">*</span></span></label>
           <input id="ubicacion" formControlName="ubicacion" type="text" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="Ej. Edificio B, Colonia Escalón" />
         </div>
-
         <div class="form-control">
           <label for="modalidadId" class="label py-1"><span class="label-text font-bold text-xs">Modalidad <span class="text-error">*</span></span></label>
           <select id="modalidadId" formControlName="modalidadId" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50">
@@ -40,8 +32,6 @@
             <option *ngFor="let mod of modalidades" [value]="mod.id">{{ mod.nombre }}</option>
           </select>
         </div>
-
-        <!-- Ubicación: Departamento y Municipio -->
         <div class="form-control">
           <label for="departamentoId" class="label py-1"><span class="label-text font-bold text-xs">Departamento <span class="text-error">*</span></span></label>
           <select id="departamentoId" formControlName="departamentoId" (change)="onDepartamentoChange($event)" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50">
@@ -49,15 +39,23 @@
             <option *ngFor="let dep of departamentos" [value]="dep.id">{{ dep.nombre }}</option>
           </select>
         </div>
-
         <div class="form-control">
           <label for="municipioId" class="label py-1"><span class="label-text font-bold text-xs">Municipio <span class="text-error">*</span></span></label>
-          <select id="municipioId" formControlName="municipioId" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" [attr.disabled]="!municipios.length ? '' : null">
+          <select id="municipioId" formControlName="municipioId" (change)="onMunicipioChange($event)" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" [attr.disabled]="!municipios.length ? '' : null">
             <option value="" disabled selected>Seleccione un municipio</option>
             <option *ngFor="let mun of municipios" [value]="mun.id">{{ mun.nombre }}</option>
           </select>
         </div>
-
+        <div class="form-control">
+          <label for="distritoId" class="label py-1"><span class="label-text font-bold text-xs">Distrito <span class="text-error">*</span></span></label>
+          <select id="distritoId" formControlName="distritoId" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" [attr.disabled]="!distritos.length ? '' : null">
+            <option value="" disabled selected>Seleccione un distrito</option>
+            <option *ngFor="let dis of distritos" [value]="dis.id">{{ dis.nombre }}</option>
+          </select>
+          <label class="label py-0 mt-1" *ngIf="ofertaForm.get('distritoId')?.touched && ofertaForm.get('distritoId')?.hasError('required')">
+            <span class="label-text-alt text-error">El distrito es obligatorio</span>
+          </label>
+        </div>
         <div class="form-control">
           <label for="tipoContratoId" class="label py-1"><span class="label-text font-bold text-xs">Tipo de Contrato <span class="text-error">*</span></span></label>
           <select id="tipoContratoId" formControlName="tipoContratoId" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50">
@@ -65,31 +63,32 @@
             <option *ngFor="let contrato of contratos" [value]="contrato.id">{{ contrato.nombre }}</option>
           </select>
         </div>
-
-        <!-- Detalles Generales -->
         <div class="form-control">
           <label for="vacantes" class="label py-1"><span class="label-text font-bold text-xs">Número de Vacantes <span class="text-error">*</span></span></label>
           <input id="vacantes" formControlName="vacantes" type="number" min="1" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" />
         </div>
-
         <div class="form-control">
           <label for="generoId" class="label py-1"><span class="label-text font-bold text-xs">Género Preferido</span></label>
           <select id="generoId" formControlName="generoId" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50">
             <option *ngFor="let genero of generos" [value]="genero.id">{{ genero.nombre }}</option>
           </select>
         </div>
-
         <div class="form-control">
-          <label for="fechaExpiracion" class="label py-1"><span class="label-text font-bold text-xs">Fecha de Expiración</span></label>
-          <input id="fechaExpiracion" formControlName="fechaExpiracion" type="date" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" />
+          <label for="fechaExpiracion" class="label py-1"><span class="label-text font-bold text-xs">Fecha de Expiración <span class="text-error">*</span></span></label>
+          <input id="fechaExpiracion" formControlName="fechaExpiracion" type="date" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50"
+                 [class.input-error]="ofertaForm.get('fechaExpiracion')?.touched && ofertaForm.get('fechaExpiracion')?.invalid" />
+          <label class="label py-0 mt-1" *ngIf="ofertaForm.get('fechaExpiracion')?.touched && ofertaForm.get('fechaExpiracion')?.hasError('required')">
+            <span class="label-text-alt text-error">La fecha de expiración es obligatoria</span>
+          </label>
         </div>
-
-        <!-- Rangos: Salario y Edad -->
         <div class="form-control">
-          <label for="salarioMin" class="label py-1"><span class="label-text font-bold text-xs">Salario Min (USD)</span></label>
-          <input id="salarioMin" formControlName="salarioMin" type="number" step="0.01" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="600.00" />
+          <label for="salarioMin" class="label py-1"><span class="label-text font-bold text-xs">Salario Min (USD) <span class="text-error">*</span></span></label>
+          <input id="salarioMin" formControlName="salarioMin" type="number" step="0.01" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="600.00"
+                 [class.input-error]="ofertaForm.get('salarioMin')?.touched && ofertaForm.get('salarioMin')?.invalid" />
+          <label class="label py-0 mt-1" *ngIf="ofertaForm.get('salarioMin')?.touched && ofertaForm.get('salarioMin')?.hasError('required')">
+            <span class="label-text-alt text-error">El salario mínimo es obligatorio</span>
+          </label>
         </div>
-
         <div class="form-control">
           <label for="salarioMax" class="label py-1"><span class="label-text font-bold text-xs">Salario Max (USD)</span></label>
           <input id="salarioMax" formControlName="salarioMax" type="number" step="0.01" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="1000.00" />
@@ -97,20 +96,15 @@
             <span class="label-text-alt text-error">El máximo debe ser mayor al mínimo</span>
           </label>
         </div>
-        
-        <div class="form-control hidden lg:block"></div> <!-- Placeholder for grid -->
-
+        <div class="form-control hidden lg:block"></div> 
         <div class="form-control">
           <label for="edadMin" class="label py-1"><span class="label-text font-bold text-xs">Edad Mínima</span></label>
           <input id="edadMin" formControlName="edadMin" type="number" min="18" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" />
         </div>
-
         <div class="form-control">
           <label for="edadMax" class="label py-1"><span class="label-text font-bold text-xs">Edad Máxima</span></label>
           <input id="edadMax" formControlName="edadMax" type="number" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" />
         </div>
-
-        <!-- Licencias y Vehículo -->
         <div class="form-control">
           <label for="licenciaId" class="label py-1"><span class="label-text font-bold text-xs">Tipo de Licencia</span></label>
           <select id="licenciaId" formControlName="licenciaId" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50">
@@ -118,15 +112,12 @@
             <option *ngFor="let lic of licencias" [value]="lic.id">{{ lic.nombre }}</option>
           </select>
         </div>
-
         <div class="form-control flex justify-center mt-6">
           <label class="cursor-pointer label flex gap-4 justify-start">
             <input type="checkbox" formControlName="tieneVehiculo" class="toggle toggle-primary" />
             <span class="label-text font-bold text-sm">¿Requiere vehículo propio?</span>
           </label>
         </div>
-
-        <!-- Descripciones Largas -->
         <div class="form-control md:col-span-2 lg:col-span-3 mt-4">
           <label for="descripcion" class="label py-1 flex justify-between">
             <span class="label-text font-bold text-xs">Descripción del Puesto <span class="text-error">*</span></span>
@@ -139,12 +130,124 @@
             </span>
           </label>
         </div>
-
-        <div class="form-control md:col-span-2 lg:col-span-3">
-          <label for="requisitos" class="label py-1"><span class="label-text font-bold text-xs">Requisitos Adicionales <span class="text-error">*</span></span></label>
-          <textarea id="requisitos" formControlName="requisitos" class="textarea textarea-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 h-24" placeholder="Ej. - 3 años de experiencia en .NET..."></textarea>
+        <div class="form-control md:col-span-2 lg:col-span-3 mt-4">
+          <label class="label py-1">
+            <span class="label-text font-bold text-sm text-base-content flex items-center gap-1">
+              <span class="material-symbols-outlined text-primary text-lg">psychology</span>
+              Habilidades Requeridas
+            </span>
+            <span class="label-text-alt text-base-content/50">Selecciona las habilidades necesarias para la vacante (opcional)</span>
+          </label>
+          <div class="relative w-full bg-base-200/50 backdrop-blur-md rounded-2xl p-4 border border-base-content/10 transition-all duration-300 hover:border-primary/30">
+            <div class="flex flex-wrap gap-2 mb-3 min-h-[40px] items-center p-2 rounded-xl bg-base-100 border border-base-content/5">
+              <span *ngIf="habilidadesSeleccionadas.length === 0" class="text-xs text-base-content/40 px-2 select-none">
+                No hay habilidades seleccionadas. Usa el buscador de abajo para agregarlas.
+              </span>
+              <div 
+                *ngFor="let hab of habilidadesSeleccionadas" 
+                class="badge badge-primary badge-lg gap-2 py-3.5 px-3 rounded-xl animate-scale-in text-xs font-semibold shadow-sm transition-transform duration-200 hover:scale-105"
+              >
+                <span>{{ hab.nombre }}</span>
+                <button 
+                  type="button" 
+                  (click)="deseleccionarHabilidad(hab)" 
+                  class="hover:bg-primary-focus rounded-full p-0.5 inline-flex items-center justify-center transition-colors"
+                >
+                  <span class="material-symbols-outlined text-xs">close</span>
+                </button>
+              </div>
+            </div>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40">search</span>
+              <input 
+                type="text" 
+                [value]="searchTerm"
+                (input)="filtrarHabilidades($event)"
+                placeholder="Buscar habilidades (ej. Angular, .NET, SQL)..." 
+                class="input input-bordered w-full pl-10 bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm"
+              />
+            </div>
+            <div 
+              *ngIf="searchTerm && habilidadesFiltradas.length > 0" 
+              class="absolute z-30 left-0 right-0 mt-2 max-h-48 overflow-y-auto bg-base-100 border border-base-content/10 rounded-xl shadow-2xl p-2 scrollbar-thin scrollbar-thumb-rounded"
+            >
+              <button 
+                type="button" 
+                *ngFor="let hab of habilidadesFiltradas" 
+                (click)="seleccionarHabilidad(hab)"
+                class="flex items-center justify-between w-full px-4 py-2 text-left text-xs font-medium text-base-content hover:bg-primary hover:text-primary-content rounded-lg transition-all duration-150"
+              >
+                <span>{{ hab.nombre }}</span>
+                <span class="material-symbols-outlined text-sm">add_circle</span>
+              </button>
+            </div>
+            <div 
+              *ngIf="searchTerm && habilidadesFiltradas.length === 0" 
+              class="absolute z-30 left-0 right-0 mt-2 bg-base-100 border border-base-content/10 rounded-xl shadow-2xl p-4 text-center text-xs text-base-content/50"
+            >
+              No se encontraron habilidades que coincidan con "{{ searchTerm }}".
+            </div>
+          </div>
         </div>
-
+        <div class="form-control md:col-span-2 lg:col-span-3 mt-4">
+          <label class="label py-1">
+            <span class="label-text font-bold text-sm text-base-content flex items-center gap-1">
+              <span class="material-symbols-outlined text-primary text-lg">school</span>
+              Carreras Destino
+            </span>
+            <span class="label-text-alt text-base-content/50">Selecciona las carreras a las que va dirigida la plaza (opcional)</span>
+          </label>
+          <div class="relative w-full bg-base-200/50 backdrop-blur-md rounded-2xl p-4 border border-base-content/10 transition-all duration-300 hover:border-primary/30">
+            <div class="flex flex-wrap gap-2 mb-3 min-h-[40px] items-center p-2 rounded-xl bg-base-100 border border-base-content/5">
+              <span *ngIf="carrerasSeleccionadas.length === 0" class="text-xs text-base-content/40 px-2 select-none">
+                No hay carreras seleccionadas. Usa el buscador de abajo para agregarlas.
+              </span>
+              <div 
+                *ngFor="let car of carrerasSeleccionadas" 
+                class="badge badge-secondary badge-lg gap-2 py-3.5 px-3 rounded-xl animate-scale-in text-xs font-semibold shadow-sm transition-transform duration-200 hover:scale-105 text-white"
+              >
+                <span>{{ car.nombre }}</span>
+                <button 
+                  type="button" 
+                  (click)="deseleccionarCarrera(car)" 
+                  class="hover:bg-secondary-focus rounded-full p-0.5 inline-flex items-center justify-center transition-colors"
+                >
+                  <span class="material-symbols-outlined text-xs">close</span>
+                </button>
+              </div>
+            </div>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40">search</span>
+              <input 
+                type="text" 
+                [value]="carreraSearchTerm"
+                (input)="filtrarCarreras($event)"
+                placeholder="Buscar carreras (ej. Ingeniería en Sistemas, Licenciatura en Administración)..." 
+                class="input input-bordered w-full pl-10 bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm"
+              />
+            </div>
+            <div 
+              *ngIf="carreraSearchTerm && carrerasFiltradas.length > 0" 
+              class="absolute z-30 left-0 right-0 mt-2 max-h-48 overflow-y-auto bg-base-100 border border-base-content/10 rounded-xl shadow-2xl p-2 scrollbar-thin scrollbar-thumb-rounded"
+            >
+              <button 
+                type="button" 
+                *ngFor="let car of carrerasFiltradas" 
+                (click)="seleccionarCarrera(car)"
+                class="flex items-center justify-between w-full px-4 py-2 text-left text-xs font-medium text-base-content hover:bg-secondary hover:text-secondary-content rounded-lg transition-all duration-150"
+              >
+                <span>{{ car.nombre }}</span>
+                <span class="material-symbols-outlined text-sm">add_circle</span>
+              </button>
+            </div>
+            <div 
+              *ngIf="carreraSearchTerm && carrerasFiltradas.length === 0" 
+              class="absolute z-30 left-0 right-0 mt-2 bg-base-100 border border-base-content/10 rounded-xl shadow-2xl p-4 text-center text-xs text-base-content/50"
+            >
+              No se encontraron carreras que coincidan con "{{ carreraSearchTerm }}".
+            </div>
+          </div>
+        </div>
         <div class="md:col-span-2 lg:col-span-3 mt-6 flex justify-end gap-4 border-t border-base-200 pt-6">
           <button type="button" class="btn btn-ghost rounded-xl" routerLink="/dashboard/home">Cancelar</button>
           <button type="submit" class="btn btn-primary rounded-xl px-8 shadow-lg shadow-primary/30" [disabled]="ofertaForm.invalid || isLoading">
@@ -152,7 +255,6 @@
             Publicar Vacante
           </button>
         </div>
-
       </form>
     </div>
   </div>

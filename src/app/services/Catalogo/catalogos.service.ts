@@ -43,6 +43,10 @@ export class CatalogosService {
     return this.http.get<ResponseAPI<CatalogDTO[]>>(`${this.apiUrl}municipios/${departamentoId}`);
   }
 
+  obtenerDistritos(municipioId: number): Observable<ResponseAPI<CatalogDTO[]>> {
+    return this.http.get<ResponseAPI<CatalogDTO[]>>(`${this.apiUrl}distritos/${municipioId}`);
+  }
+
   obtenerTiposContrato(): Observable<ResponseAPI<CatalogDTO[]>> {
     return this.http.get<ResponseAPI<CatalogDTO[]>>(`${this.apiUrl}tipos-contrato`);
   }

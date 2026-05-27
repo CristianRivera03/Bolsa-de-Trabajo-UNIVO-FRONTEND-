@@ -1,0 +1,218 @@
+<div class="container mx-auto px-4 py-8 max-w-4xl animate-fade-in">
+  
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-primary flex items-center gap-3">
+      <span class="material-symbols-outlined text-4xl">domain</span>
+      Perfil Corporativo
+    </h1>
+    <p class="text-base-content/70 mt-2">
+      Esta información será visible para los estudiantes y la universidad.
+    </p>
+  </div>
+
+  @if (isLoading) {
+    <div class="space-y-4">
+      <div class="skeleton h-32 w-32 rounded-xl mx-auto"></div>
+      <div class="skeleton h-32 w-full"></div>
+      <div class="skeleton h-32 w-full"></div>
+    </div>
+  } @else {
+    
+    <div class="flex flex-col items-center justify-center mb-8">
+      <div class="relative group cursor-pointer" (click)="fileInput.click()">
+        <div class="avatar">
+          <div class="w-32 h-32 rounded-xl ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden bg-base-200 shadow-lg relative">
+            @if (isUploadingLogo) {
+              <div class="absolute inset-0 z-20 flex items-center justify-center bg-base-100/70 backdrop-blur-sm">
+                <span class="loading loading-spinner loading-lg text-primary"></span>
+              </div>
+            }
+            <img [src]="logoUrl" alt="Logo Empresa" class="object-cover w-full h-full" />
+          </div>
+        </div>
+        <div class="absolute inset-0 bg-black/40 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 w-32 h-32">
+          <span class="material-symbols-outlined text-white text-3xl">photo_camera</span>
+        </div>
+      </div>
+      <input type="file" #fileInput class="hidden" accept="image/jpeg, image/png, image/webp" (change)="onLogoSelected($event)" />
+      <span class="text-sm font-medium text-base-content/50 mt-3">Haz clic para cambiar el logo</span>
+    </div>
+
+    <form [formGroup]="empresaForm" (ngSubmit)="guardarPerfil()">
+      
+      <div class="card bg-base-100 shadow-sm border border-base-200 mb-6">
+        <div class="card-body p-6">
+          <h2 class="card-title text-lg border-b pb-2 mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined">info</span> Información General
+          </h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-medium" [class.text-error]="empresaForm.get('nombreComercial')?.touched && empresaForm.get('nombreComercial')?.invalid">Nombre Comercial *</span>
+              </label>
+              <input type="text" formControlName="nombreComercial" class="input input-bordered w-full" 
+                     [class.input-error]="empresaForm.get('nombreComercial')?.touched && empresaForm.get('nombreComercial')?.invalid" 
+                     placeholder="Ej. Universidad de Oriente" />
+              @if (empresaForm.get('nombreComercial')?.touched && empresaForm.get('nombreComercial')?.hasError('required')) {
+                <span class="label-text-alt text-error mt-1">Este campo es obligatorio</span>
+              }
+            </div>
+
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-medium" [class.text-error]="empresaForm.get('sector')?.touched && empresaForm.get('sector')?.invalid">Sector *</span>
+              </label>
+              <select formControlName="sector" class="select select-bordered w-full"
+                      [class.select-error]="empresaForm.get('sector')?.touched && empresaForm.get('sector')?.invalid">
+                <option value="" disabled>Selecciona un sector...</option>
+                <option value="Tecnología">Tecnología y Software</option>
+                <option value="Alimentos">Alimentos y Bebidas</option>
+                <option value="Finanzas">Banca y Finanzas</option>
+                <option value="Educación">Educación</option>
+                <option value="Salud">Salud y Farmacéutica</option>
+              </select>
+              @if (empresaForm.get('sector')?.touched && empresaForm.get('sector')?.hasError('required')) {
+                <span class="label-text-alt text-error mt-1">Este campo es obligatorio</span>
+              }
+            </div>
+
+            <div class="form-control">
+              <label class="label"><span class="label-text font-medium">Razón Social (Legal)</span></label>
+              <input type="text" formControlName="razonSocial" class="input input-bordered w-full" placeholder="Ej. Universidad de Oriente" />
+            </div>
+
+            <div class="form-control">
+              <label class="label"><span class="label-text font-medium">NIT</span></label>
+              <input type="text" formControlName="nit" class="input input-bordered w-full" placeholder="0000-000000-000-0" />
+            </div>
+
+            <div class="form-control md:col-span-2">
+              <label class="label">
+                <span class="label-text font-medium" [class.text-error]="empresaForm.get('descripcion')?.touched && empresaForm.get('descripcion')?.invalid">Descripción de la Empresa *</span>
+              </label>
+              <textarea formControlName="descripcion" class="textarea textarea-bordered h-24 w-full" 
+                        [class.textarea-error]="empresaForm.get('descripcion')?.touched && empresaForm.get('descripcion')?.invalid" 
+                        placeholder="Describe la misión y visión..."></textarea>
+              @if (empresaForm.get('descripcion')?.touched && empresaForm.get('descripcion')?.hasError('required')) {
+                <span class="label-text-alt text-error mt-1">Este campo es obligatorio</span>
+              }
+              @if (empresaForm.get('descripcion')?.touched && empresaForm.get('descripcion')?.hasError('maxlength')) {
+                <span class="label-text-alt text-error mt-1">La descripción es demasiado larga (máx. 1000 caracteres)</span>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-base-100 shadow-sm border border-base-200 mb-6">
+        <div class="card-body p-6">
+          <h2 class="card-title text-lg border-b pb-2 mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined">public</span> Presencia y Ubicación
+          </h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-medium" [class.text-error]="empresaForm.get('correoInstitucional')?.touched && empresaForm.get('correoInstitucional')?.invalid">Correo Institucional</span>
+              </label>
+              <input type="email" formControlName="correoInstitucional" class="input input-bordered w-full" 
+                     [class.input-error]="empresaForm.get('correoInstitucional')?.touched && empresaForm.get('correoInstitucional')?.invalid" 
+                     placeholder="info@empresa.com" />
+              @if (empresaForm.get('correoInstitucional')?.touched && empresaForm.get('correoInstitucional')?.hasError('email')) {
+                <span class="label-text-alt text-error mt-1">Ingresa un correo electrónico válido</span>
+              }
+            </div>
+
+            <div class="form-control">
+              <label class="label"><span class="label-text font-medium">Teléfono Fijo</span></label>
+              <input type="tel" formControlName="telefonoFijo" class="input input-bordered w-full" placeholder="2222-0000" />
+            </div>
+
+            <div class="form-control">
+              <label class="label"><span class="label-text font-medium">Sitio Web</span></label>
+              <input type="url" formControlName="sitioWeb" class="input input-bordered w-full" placeholder="https://www.empresa.com" />
+            </div>
+
+            <div class="form-control">
+              <label class="label"><span class="label-text font-medium">Dirección Completa</span></label>
+              <input type="text" formControlName="direccion" class="input input-bordered w-full" placeholder="Dirección física de las oficinas" />
+            </div>
+
+            <div class="form-control">
+              <label class="label"><span class="label-text font-medium">Facebook (Opcional)</span></label>
+              <input type="text" formControlName="facebook" class="input input-bordered w-full" placeholder="Enlace a Facebook" />
+            </div>
+
+            <div class="form-control">
+              <label class="label"><span class="label-text font-medium">Twitter / X (Opcional)</span></label>
+              <input type="text" formControlName="twitter" class="input input-bordered w-full" placeholder="Enlace a Twitter" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-base-100 shadow-sm border border-base-200 mb-6" formGroupName="contacto">
+        <div class="card-body p-6">
+          <h2 class="card-title text-lg border-b pb-2 mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined">badge</span> Datos del Encargado (RRHH)
+          </h2>
+          <p class="text-sm text-base-content/60 mb-4">Persona de contacto para la coordinación con la universidad.</p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="form-control">
+              <label class="label"><span class="label-text font-medium">Nombre Completo</span></label>
+              <input type="text" formControlName="nombreCompleto" class="input input-bordered w-full" placeholder="Nombre del encargado" />
+            </div>
+
+            <div class="form-control">
+              <label class="label"><span class="label-text font-medium">Cargo</span></label>
+              <input type="text" formControlName="cargo" class="input input-bordered w-full" placeholder="Ej. Gerente de RRHH" />
+            </div>
+
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-medium" [class.text-error]="empresaForm.get('contacto.dui')?.touched && empresaForm.get('contacto.dui')?.invalid">DUI</span>
+              </label>
+              <input type="text" formControlName="dui" class="input input-bordered w-full"
+                     [class.input-error]="empresaForm.get('contacto.dui')?.touched && empresaForm.get('contacto.dui')?.invalid"
+                     placeholder="00000000-0" maxlength="10" />
+              @if (empresaForm.get('contacto.dui')?.touched && empresaForm.get('contacto.dui')?.hasError('pattern')) {
+                <span class="label-text-alt text-error mt-1">El DUI debe tener el formato 00000000-0 (8 dígitos, guión, 1 dígito)</span>
+              }
+            </div>
+
+            <div class="form-control">
+              <label class="label"><span class="label-text font-medium">Teléfono Móvil</span></label>
+              <input type="tel" formControlName="telefonoMovil" class="input input-bordered w-full" placeholder="7000-0000" />
+            </div>
+
+            <div class="form-control md:col-span-2">
+              <label class="label">
+                <span class="label-text font-medium" [class.text-error]="empresaForm.get('contacto.correoContacto')?.touched && empresaForm.get('contacto.correoContacto')?.invalid">Correo Electrónico Directo</span>
+              </label>
+              <input type="email" formControlName="correoContacto" class="input input-bordered w-full" 
+              [class.input-error]="empresaForm.get('contacto.correoContacto')?.touched && empresaForm.get('contacto.correoContacto')?.invalid" 
+              placeholder="correo@empresa.com" />
+              @if (empresaForm.get('contacto.correoContacto')?.touched && empresaForm.get('contacto.correoContacto')?.hasError('email')) {
+                <span class="label-text-alt text-error mt-1">Ingresa un correo electrónico válido</span>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end mt-4">
+        <button type="submit" class="btn btn-primary min-w-[160px]" [disabled]="empresaForm.pristine || isSaving">
+          @if (isSaving) {
+            <span class="loading loading-spinner loading-sm"></span> Guardando...
+          } @else {
+            <span class="material-symbols-outlined text-[20px]">save</span> Guardar Cambios
+          }
+        </button>
+      </div>
+
+    </form>
+  }
+</div>

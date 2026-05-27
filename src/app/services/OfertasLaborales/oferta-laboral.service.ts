@@ -19,6 +19,10 @@ export class OfertaLaboralService {
     return this.http.get<ResponseAPI<OfertaLaboral[]>>(`${this.apiUrl}lista`);
   }
 
+  obtenerMisOfertas(): Observable<ResponseAPI<OfertaLaboral[]>> {
+    return this.http.get<ResponseAPI<OfertaLaboral[]>>(`${this.apiUrl}mis-ofertas`);
+  }
+
   crear(model : OfertaLaboralCreate): Observable<ResponseAPI<OfertaLaboral>> {
     return this.http.post<ResponseAPI<OfertaLaboral>>(`${this.apiUrl}crear`, model);
   }

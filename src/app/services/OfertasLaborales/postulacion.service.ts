@@ -24,4 +24,12 @@ export class PostulacionService {
   obtenerMisPostulaciones(): Observable<ResponseAPI<PostulacionDTO[]>> {
     return this.http.get<ResponseAPI<PostulacionDTO[]>>(`${this.apiUrl}MisPostulaciones`);
   }
+
+  obtenerPostulacionesPorOferta(ofertaId: number): Observable<ResponseAPI<PostulacionDTO[]>> {
+    return this.http.get<ResponseAPI<PostulacionDTO[]>>(`${this.apiUrl}Oferta/${ofertaId}`);
+  }
+
+  descargarCV(perfilId: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}CV/${perfilId}`, { responseType: 'blob' });
+  }
 }

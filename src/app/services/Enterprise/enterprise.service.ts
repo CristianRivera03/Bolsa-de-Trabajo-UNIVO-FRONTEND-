@@ -21,14 +21,14 @@ export class EnterpriseService {
   }
 
   getMiPerfil(): Observable<ResponseAPI<EmpresaDTO>> {
-    return this.http.get<ResponseAPI<EmpresaDTO>>(`${this.apiUrl}/MiPerfil`);
+    return this.http.get<ResponseAPI<EmpresaDTO>>(`${this.apiUrl}MiPerfil`);
   }
 
   updateMiPerfil(dto: EmpresaUpdateDTO): Observable<ResponseAPI<EmpresaDTO>> {
-    return this.http.put<ResponseAPI<EmpresaDTO>>(`${this.apiUrl}/MiPerfil`, dto);
+    return this.http.put<ResponseAPI<EmpresaDTO>>(`${this.apiUrl}MiPerfil`, dto);
   }
 
   cambiarLogo(formData: FormData): Observable<ResponseAPI<string>> {
-    return this.http.post<ResponseAPI<string>>(`${this.apiUrl}/CambiarLogo`, formData);
+    return this.http.post<ResponseAPI<string>>(`${this.apiUrl}CambiarLogo`, formData);
   }
 }

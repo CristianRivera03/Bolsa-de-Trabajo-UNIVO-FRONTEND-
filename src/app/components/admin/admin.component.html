@@ -1,0 +1,509 @@
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+<div class="animate-fade-in p-6 space-y-8 max-w-7xl mx-auto">
+  <!-- Header Banner -->
+  <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary via-blue-800 to-indigo-900 p-8 shadow-xl text-white">
+    <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+    <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-blue-500/20 rounded-full blur-2xl"></div>
+    
+    <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div>
+        <h1 class="text-3xl font-extrabold tracking-tight">Panel de Administración</h1>
+        <p class="mt-2 text-blue-100 max-w-xl text-sm md:text-base">
+          Supervise y controle las cuentas, las empresas asociadas y las publicaciones de empleo. Mantenga la seguridad y calidad del portal de empleo UNIVO.
+        </p>
+      </div>
+      <div class="badge badge-lg bg-white/20 border-none text-white font-bold tracking-wider uppercase px-4 py-3">
+        Administrador
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Alerts -->
+  <div *ngIf="errorMsg" class="alert alert-error shadow-lg">
+    <span class="material-symbols-outlined">error</span>
+    <span>{{ errorMsg }}</span>
+    <button class="btn btn-sm btn-ghost" (click)="errorMsg = null">Cerrar</button>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <!-- Users Stats -->
+    <div class="card bg-base-100 shadow-md hover:shadow-lg transition-all duration-300 border border-base-200">
+      <div class="card-body p-6 flex flex-row items-center justify-between">
+        <div>
+          <span class="text-xs font-semibold text-base-content/50 uppercase tracking-wider block">Usuarios</span>
+          <span class="text-3xl font-extrabold text-base-content block mt-1">
+            {{ stats ? stats.totalUsuarios : '...' }}
+          </span>
+          <div class="flex gap-2 mt-2 text-[11px] font-semibold">
+            <span class="text-success">{{ stats ? stats.usuariosActivos : '...' }} Activos</span>
+            <span class="text-base-content/30">•</span>
+            <span class="text-error">{{ stats ? stats.usuariosInactivos : '...' }} Suspendidos</span>
+          </div>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+          <span class="material-symbols-outlined text-2xl font-bold">group</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Companies Stats -->
+    <div class="card bg-base-100 shadow-md hover:shadow-lg transition-all duration-300 border border-base-200">
+      <div class="card-body p-6 flex flex-row items-center justify-between">
+        <div>
+          <span class="text-xs font-semibold text-base-content/50 uppercase tracking-wider block">Empresas</span>
+          <span class="text-3xl font-extrabold text-base-content block mt-1">
+            {{ stats ? stats.totalEmpresas : '...' }}
+          </span>
+          <div class="flex gap-2 mt-2 text-[11px] font-semibold">
+            <span class="text-success">{{ stats ? stats.empresasActivas : '...' }} Activas</span>
+            <span class="text-base-content/30">•</span>
+            <span class="text-error">{{ stats ? stats.empresasInactivas : '...' }} Suspendidas</span>
+          </div>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
+          <span class="material-symbols-outlined text-2xl font-bold">business</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Job Posts Stats -->
+    <div class="card bg-base-100 shadow-md hover:shadow-lg transition-all duration-300 border border-base-200">
+      <div class="card-body p-6 flex flex-row items-center justify-between">
+        <div>
+          <span class="text-xs font-semibold text-base-content/50 uppercase tracking-wider block">Ofertas Empleo</span>
+          <span class="text-3xl font-extrabold text-base-content block mt-1">
+            {{ stats ? stats.totalOfertas : '...' }}
+          </span>
+          <div class="flex gap-2 mt-2 text-[11px] font-semibold">
+            <span class="text-success">{{ stats ? stats.ofertasActivas : '...' }} Activas</span>
+            <span class="text-base-content/30">•</span>
+            <span class="text-error">{{ stats ? stats.ofertasInactivas : '...' }} Cerradas</span>
+          </div>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
+          <span class="material-symbols-outlined text-2xl font-bold">work</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Applications Stats -->
+    <div class="card bg-base-100 shadow-md hover:shadow-lg transition-all duration-300 border border-base-200">
+      <div class="card-body p-6 flex flex-row items-center justify-between">
+        <div>
+          <span class="text-xs font-semibold text-base-content/50 uppercase tracking-wider block">Postulaciones</span>
+          <span class="text-3xl font-extrabold text-base-content block mt-1">
+            {{ stats ? stats.totalPostulaciones : '...' }}
+          </span>
+          <span class="text-[11px] font-semibold text-base-content/40 block mt-2">Registradas en total</span>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-neutral/10 flex items-center justify-center text-neutral">
+          <span class="material-symbols-outlined text-2xl font-bold">assignment_turned_in</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs Navigation -->
+  <div class="tabs tabs-boxed bg-base-100 p-2 shadow-sm border border-base-200 flex gap-2 overflow-x-auto">
+    <button 
+      class="tab flex-1 md:flex-none gap-2 rounded-lg py-3 px-4 font-semibold text-sm transition-all duration-200"
+      [class.tab-active]="activeTab === 'dashboard'"
+      (click)="activeTab = 'dashboard'">
+      <span class="material-symbols-outlined text-[18px]">dashboard</span>
+      Resumen
+    </button>
+    <button 
+      class="tab flex-1 md:flex-none gap-2 rounded-lg py-3 px-4 font-semibold text-sm transition-all duration-200"
+      [class.tab-active]="activeTab === 'usuarios'"
+      (click)="activeTab = 'usuarios'">
+      <span class="material-symbols-outlined text-[18px]">group</span>
+      Usuarios
+    </button>
+    <button 
+      class="tab flex-1 md:flex-none gap-2 rounded-lg py-3 px-4 font-semibold text-sm transition-all duration-200"
+      [class.tab-active]="activeTab === 'empresas'"
+      (click)="activeTab = 'empresas'">
+      <span class="material-symbols-outlined text-[18px]">business</span>
+      Empresas
+    </button>
+    <button 
+      class="tab flex-1 md:flex-none gap-2 rounded-lg py-3 px-4 font-semibold text-sm transition-all duration-200"
+      [class.tab-active]="activeTab === 'ofertas'"
+      (click)="activeTab = 'ofertas'">
+      <span class="material-symbols-outlined text-[18px]">work</span>
+      Ofertas
+    </button>
+  </div>
+
+  <!-- TAB CONTENT -->
+  <div class="bg-base-100 rounded-2xl shadow-md border border-base-200 p-6 min-h-[400px]">
+
+    <!-- 1. DASHBOARD OVERVIEW -->
+    <div *ngIf="activeTab === 'dashboard'" class="space-y-6 animate-fade-in">
+      <div class="flex justify-between items-center border-b border-base-200 pb-4">
+        <h2 class="text-xl font-bold text-base-content flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">analytics</span>
+          Resumen de la Plataforma
+        </h2>
+        <button class="btn btn-sm btn-ghost btn-circle text-primary" (click)="loadStats()" [disabled]="loadingStats">
+          <span class="material-symbols-outlined" [class.animate-spin]="loadingStats">refresh</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Quick stats list -->
+        <div class="space-y-4">
+          <h3 class="text-sm font-semibold text-base-content/60 uppercase tracking-widest">Información General</h3>
+          <div class="bg-base-200/50 rounded-xl p-4 space-y-3">
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-base-content/70">Tasa de Actividad de Usuarios:</span>
+              <span class="font-bold text-success" *ngIf="stats">
+                {{ (stats.usuariosActivos / (stats.totalUsuarios || 1) * 100) | number:'1.0-1' }}%
+              </span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-base-content/70">Tasa de Actividad de Empresas:</span>
+              <span class="font-bold text-success" *ngIf="stats">
+                {{ (stats.empresasActivas / (stats.totalEmpresas || 1) * 100) | number:'1.0-1' }}%
+              </span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-base-content/70">Tasa de Ofertas Activas:</span>
+              <span class="font-bold text-success" *ngIf="stats">
+                {{ (stats.ofertasActivas / (stats.totalOfertas || 1) * 100) | number:'1.0-1' }}%
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- System security checks -->
+        <div class="space-y-4">
+          <h3 class="text-sm font-semibold text-base-content/60 uppercase tracking-widest font-mono">Consejos de Seguridad</h3>
+          <div class="alert alert-warning bg-warning/10 border border-warning/30 text-amber-800 rounded-xl p-4 flex items-start gap-3">
+            <span class="material-symbols-outlined text-amber-600 mt-0.5">verified_user</span>
+            <div class="text-xs space-y-1">
+              <span class="font-bold block text-sm text-amber-900">Reglas de Suspensión</span>
+              <p>1. Al desactivar una <strong>Empresa</strong>, se suspenden automáticamente las cuentas de sus reclutadores y se desactivan todas sus ofertas publicadas.</p>
+              <p>2. Al desactivar un <strong>Usuario</strong>, éste perderá acceso inmediato a la plataforma (bloqueo en inicio de sesión).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Links / Shortcuts -->
+      <div class="border-t border-base-200 pt-6 mt-6">
+        <h3 class="text-sm font-bold text-base-content/60 uppercase tracking-widest mb-4">Acciones Rápidas</h3>
+        <div class="flex flex-wrap gap-4">
+          <button (click)="activeTab = 'usuarios'" class="btn btn-outline btn-sm gap-2">
+            <span class="material-symbols-outlined text-sm">manage_accounts</span> Administrar Usuarios
+          </button>
+          <button (click)="activeTab = 'empresas'" class="btn btn-outline btn-sm gap-2">
+            <span class="material-symbols-outlined text-sm">storefront</span> Controlar Empresas
+          </button>
+          <button (click)="activeTab = 'ofertas'" class="btn btn-outline btn-sm gap-2">
+            <span class="material-symbols-outlined text-sm">playlist_add_check</span> Validar Publicaciones
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 2. USUARIOS TAB -->
+    <div *ngIf="activeTab === 'usuarios'" class="space-y-6 animate-fade-in">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-base-200 pb-4">
+        <div>
+          <h2 class="text-xl font-bold text-base-content">Cuentas de Usuarios</h2>
+          <p class="text-xs text-base-content/50">Gestione el estado de acceso de estudiantes, empresas y administradores.</p>
+        </div>
+        <div class="flex w-full sm:w-auto gap-2">
+          <div class="relative flex-1 sm:w-64">
+            <span class="material-symbols-outlined absolute left-3 top-2.5 text-base-content/40 text-[20px]">search</span>
+            <input 
+              type="text" 
+              placeholder="Buscar por correo o rol..." 
+              class="input input-bordered input-sm pl-9 pr-4 w-full rounded-lg"
+              [(ngModel)]="userSearch"
+              (ngModelChange)="applyUserFilter()" />
+          </div>
+          <button class="btn btn-sm btn-square btn-ghost" (click)="loadUsers()" [disabled]="loadingUsers">
+            <span class="material-symbols-outlined" [class.animate-spin]="loadingUsers">refresh</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Users Table -->
+      <div class="overflow-x-auto w-full">
+        <table class="table w-full">
+          <thead>
+            <tr class="bg-base-200/50">
+              <th>ID</th>
+              <th>Correo Electrónico</th>
+              <th>Rol</th>
+              <th>Fecha de Registro</th>
+              <th class="text-center">Estado</th>
+              <th class="text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="filteredUsers.length === 0 && !loadingUsers">
+              <td colspan="6" class="text-center py-8 text-base-content/50">
+                <span class="material-symbols-outlined text-4xl block mb-2 opacity-30">search_off</span>
+                No se encontraron usuarios que coincidan con la búsqueda.
+              </td>
+            </tr>
+            <tr *ngFor="let user of filteredUsers" class="hover:bg-base-200/30 transition-colors">
+              <td class="font-mono text-xs font-semibold">{{ user.id }}</td>
+              <td>
+                <div class="font-semibold text-sm text-base-content">{{ user.email }}</div>
+              </td>
+              <td>
+                <span 
+                  class="badge font-bold text-[10px] px-2 py-1 uppercase rounded"
+                  [ngClass]="{
+                    'badge-primary': user.rolName === 'Estudiante',
+                    'badge-secondary': user.rolName === 'Empresa',
+                    'badge-accent': user.rolName === 'Administrador'
+                  }">
+                  {{ user.rolName }}
+                </span>
+              </td>
+              <td class="text-xs text-base-content/60">
+                {{ user.fechaRegistro ? (user.fechaRegistro | date:'shortDate') : 'No registrada' }}
+              </td>
+              <td class="text-center">
+                <span 
+                  class="badge badge-sm font-semibold py-2 px-2.5 rounded-full"
+                  [ngClass]="user.activo ? 'badge-success text-white' : 'badge-error text-white'">
+                  {{ user.activo ? 'Activo' : 'Suspendido' }}
+                </span>
+              </td>
+              <td class="text-right">
+                <!-- Toggle switch / Action button -->
+                <button 
+                  (click)="confirmToggleUser(user)"
+                  [disabled]="user.rolName === 'Administrador'"
+                  class="btn btn-xs rounded"
+                  [ngClass]="user.activo ? 'btn-outline btn-error' : 'btn-success text-white'"
+                  [title]="user.rolName === 'Administrador' ? 'No se pueden suspender otros administradores desde aquí.' : ''">
+                  {{ user.activo ? 'Suspender' : 'Activar' }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- 3. EMPRESAS TAB -->
+    <div *ngIf="activeTab === 'empresas'" class="space-y-6 animate-fade-in">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-base-200 pb-4">
+        <div>
+          <h2 class="text-xl font-bold text-base-content">Empresas Registradas</h2>
+          <p class="text-xs text-base-content/50">Suspenda o reactive empresas aliadas para regular el contenido de la plataforma.</p>
+        </div>
+        <div class="flex w-full sm:w-auto gap-2">
+          <div class="relative flex-1 sm:w-64">
+            <span class="material-symbols-outlined absolute left-3 top-2.5 text-base-content/40 text-[20px]">search</span>
+            <input 
+              type="text" 
+              placeholder="Buscar por empresa..." 
+              class="input input-bordered input-sm pl-9 pr-4 w-full rounded-lg"
+              [(ngModel)]="companySearch"
+              (ngModelChange)="applyCompanyFilter()" />
+          </div>
+          <button class="btn btn-sm btn-square btn-ghost" (click)="loadCompanies()" [disabled]="loadingCompanies">
+            <span class="material-symbols-outlined" [class.animate-spin]="loadingCompanies">refresh</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Companies Table -->
+      <div class="overflow-x-auto w-full">
+        <table class="table w-full">
+          <thead>
+            <tr class="bg-base-200/50">
+              <th>ID</th>
+              <th>Nombre Comercial</th>
+              <th>Razón Social / NIT</th>
+              <th>Email de Contacto</th>
+              <th>Fecha de Registro</th>
+              <th class="text-center">Estado</th>
+              <th class="text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="filteredCompanies.length === 0 && !loadingCompanies">
+              <td colspan="7" class="text-center py-8 text-base-content/50">
+                <span class="material-symbols-outlined text-4xl block mb-2 opacity-30">search_off</span>
+                No se encontraron empresas registradas.
+              </td>
+            </tr>
+            <tr *ngFor="let company of filteredCompanies" class="hover:bg-base-200/30 transition-colors">
+              <td class="font-mono text-xs font-semibold">{{ company.id }}</td>
+              <td>
+                <div class="font-bold text-sm text-base-content">{{ company.nombreComercial }}</div>
+              </td>
+              <td>
+                <div class="text-xs text-base-content/80">{{ company.razonSocial || 'No registrada' }}</div>
+                <div class="text-[10px] text-base-content/40 mt-0.5">NIT: {{ company.nit || 'No registrado' }}</div>
+              </td>
+              <td class="text-sm font-semibold text-primary/80">
+                {{ company.email }}
+              </td>
+              <td class="text-xs text-base-content/60">
+                {{ company.fechaRegistro ? (company.fechaRegistro | date:'shortDate') : 'No registrada' }}
+              </td>
+              <td class="text-center">
+                <span 
+                  class="badge badge-sm font-semibold py-2 px-2.5 rounded-full"
+                  [ngClass]="company.activo ? 'badge-success text-white' : 'badge-error text-white'">
+                  {{ company.activo ? 'Activa' : 'Suspendida' }}
+                </span>
+              </td>
+              <td class="text-right">
+                <button 
+                  (click)="confirmToggleCompany(company)"
+                  class="btn btn-xs rounded"
+                  [ngClass]="company.activo ? 'btn-outline btn-error' : 'btn-success text-white'">
+                  {{ company.activo ? 'Suspender' : 'Activar' }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- 4. OFERTAS TAB -->
+    <div *ngIf="activeTab === 'ofertas'" class="space-y-6 animate-fade-in">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-base-200 pb-4">
+        <div>
+          <h2 class="text-xl font-bold text-base-content">Ofertas de Empleo</h2>
+          <p class="text-xs text-base-content/50">Supervise publicaciones activas, desactive aquellas sospechosas o de estafas.</p>
+        </div>
+        <div class="flex w-full sm:w-auto gap-2">
+          <div class="relative flex-1 sm:w-64">
+            <span class="material-symbols-outlined absolute left-3 top-2.5 text-base-content/40 text-[20px]">search</span>
+            <input 
+              type="text" 
+              placeholder="Buscar por título o empresa..." 
+              class="input input-bordered input-sm pl-9 pr-4 w-full rounded-lg"
+              [(ngModel)]="jobSearch"
+              (ngModelChange)="applyJobFilter()" />
+          </div>
+          <button class="btn btn-sm btn-square btn-ghost" (click)="loadJobPosts()" [disabled]="loadingJobs">
+            <span class="material-symbols-outlined" [class.animate-spin]="loadingJobs">refresh</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Job Offers List -->
+      <div class="space-y-4">
+        <div *ngIf="filteredJobs.length === 0 && !loadingJobs" class="text-center py-12 text-base-content/50 border-2 border-dashed border-base-300 rounded-2xl">
+          <span class="material-symbols-outlined text-4xl block mb-2 opacity-30">work_off</span>
+          No se encontraron ofertas laborales publicadas.
+        </div>
+
+        <div 
+          *ngFor="let job of filteredJobs" 
+          class="flex flex-col md:flex-row md:items-center justify-between p-5 bg-base-200/40 border border-base-200 hover:border-primary/20 rounded-xl transition-all duration-200 gap-4">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-lg bg-base-300 flex items-center justify-center overflow-hidden border border-base-200 shrink-0">
+              <img 
+                *ngIf="job.empresaLogoUrl" 
+                [src]="job.empresaLogoUrl" 
+                alt="Logo {{ job.empresaNombre }}" 
+                class="w-full h-full object-cover" />
+              <img 
+                *ngIf="!job.empresaLogoUrl" 
+                src="https://ui-avatars.com/api/?name={{ job.empresaNombre }}&background=10406d&color=fff" 
+                alt="Logo {{ job.empresaNombre }}" 
+                class="w-full h-full object-cover" />
+            </div>
+            <div class="space-y-1">
+              <h3 class="font-bold text-base-content text-base leading-snug hover:text-primary transition-colors cursor-pointer">
+                {{ job.titulo }}
+              </h3>
+              <p class="text-sm font-semibold text-primary/95">{{ job.empresaNombre }}</p>
+              
+              <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-base-content/60 pt-1">
+                <span class="flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[15px] opacity-70">location_on</span>
+                  {{ job.ubicacion }}
+                </span>
+                <span class="flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[15px] opacity-70">info</span>
+                  {{ job.modalidadNombre }}
+                </span>
+                <span class="flex items-center gap-1" *ngIf="job.fechaPublicacion">
+                  <span class="material-symbols-outlined text-[15px] opacity-70">calendar_today</span>
+                  {{ job.fechaPublicacion | date:'mediumDate' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between md:justify-end gap-6 border-t md:border-none border-base-300 pt-3 md:pt-0">
+            <div class="flex flex-col items-start md:items-end gap-1">
+              <span class="text-[10px] text-base-content/40 font-bold uppercase">Estado de Publicación</span>
+              <span 
+                class="badge badge-sm font-semibold py-2 px-2.5 rounded-full"
+                [ngClass]="job.activa ? 'badge-success text-white' : 'badge-error text-white'">
+                {{ job.activa ? 'Activa / Visible' : 'Desactivada' }}
+              </span>
+            </div>
+            
+            <button 
+              (click)="confirmToggleJobPost(job)"
+              class="btn btn-sm rounded-lg"
+              [ngClass]="job.activa ? 'btn-outline btn-error btn-sm' : 'btn-success text-white btn-sm'">
+              {{ job.activa ? 'Desactivar' : 'Activar' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PREMIUM DIALOG OVERLAY (CONFIRMATION MODAL) -->
+<div 
+  class="modal modal-bottom sm:modal-middle transition-all duration-300 ease-in-out" 
+  [class.modal-open]="showConfirmModal">
+  <div class="modal-box border border-base-200/50 shadow-2xl relative p-6">
+    <button 
+      (click)="closeConfirmModal()"
+      class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-base-content/50 hover:text-base-content">
+      ✕
+    </button>
+    
+    <div class="flex items-start gap-4 mt-2">
+      <div class="w-12 h-12 rounded-full bg-error/10 flex items-center justify-center text-error shrink-0">
+        <span class="material-symbols-outlined text-2xl font-bold">warning</span>
+      </div>
+      <div class="space-y-2">
+        <h3 class="font-extrabold text-lg text-base-content leading-tight">{{ confirmTitle }}</h3>
+        <p class="text-sm text-base-content/70 leading-relaxed">{{ confirmMessage }}</p>
+      </div>
+    </div>
+    
+    <div class="modal-action gap-2 mt-8">
+      <button 
+        (click)="closeConfirmModal()"
+        class="btn btn-ghost btn-sm sm:btn-md rounded-lg">
+        Cancelar
+      </button>
+      <button 
+        (click)="executePendingAction()"
+        class="btn btn-error btn-sm sm:btn-md text-white rounded-lg px-6 font-bold shadow-lg shadow-error/20">
+        Confirmar
+      </button>
+    </div>
+  </div>
+  <div class="modal-backdrop bg-neutral-900/60 backdrop-blur-sm" (click)="closeConfirmModal()"></div>
+</div>

@@ -21,6 +21,17 @@ import {ModalPostulacionComponent} from '../modals/postulacion-modal/postulacion
 export class OfertaDetalleComponent implements OnInit {
 
   oferta: OfertaLaboral | null = null;
+
+  get rolActual(): string {
+    const session = localStorage.getItem('userSession');
+    if (!session) return '';
+    return JSON.parse(session)?.rolName ?? '';
+  }
+
+  get puedeAplicar(): boolean {
+    const rolesRestringidos = ['Empresa', 'Administrador'];
+    return !rolesRestringidos.includes(this.rolActual);
+  }
   private ofertaLaboralService = inject(OfertaLaboralService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);

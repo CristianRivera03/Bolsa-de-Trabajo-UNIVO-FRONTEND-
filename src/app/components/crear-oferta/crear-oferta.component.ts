@@ -26,12 +26,24 @@ export class CrearOfertaComponent implements OnInit {
   departamentos: CatalogDTO[] = [];
   modalidades: CatalogDTO[] = [];
   municipios: CatalogDTO[] = [];
+  distritos: CatalogDTO[] = [];
   licencias: CatalogDTO[] = [];
   contratos: CatalogDTO[] = [];
-  generos: CatalogDTO[] = []
+  generos: CatalogDTO[] = [];
   carreras: CatalogDTO[] = [];
   nivelesIdioma: CatalogDTO[] = [];
   gradosAcademicos: CatalogDTO[] = [];
+
+  // Habilidades
+  todasHabilidades: CatalogDTO[] = [];
+  habilidadesFiltradas: CatalogDTO[] = [];
+  habilidadesSeleccionadas: CatalogDTO[] = [];
+  searchTerm: string = '';
+
+  // Carreras
+  carrerasFiltradas: CatalogDTO[] = [];
+  carrerasSeleccionadas: CatalogDTO[] = [];
+  carreraSearchTerm: string = '';
 
 
   private ofertaService = inject(OfertaLaboralService);
@@ -43,12 +55,12 @@ export class CrearOfertaComponent implements OnInit {
       empresaId : this.sesionActual ? this.sesionActual.usuarioId : null,
       titulo: ['', Validators.required],
       descripcion: ['', [Validators.required, Validators.minLength(20)]],
-      requisitos: ['', Validators.required],
+      requisitos: [''],
       modalidadId: ['', Validators.required], 
       ubicacion: ['', Validators.required],
-      salarioMin: [null, Validators.min(1)],
+      salarioMin: [null, [Validators.required, Validators.min(1)]],
       salarioMax: [null, Validators.min(1)],
-      fechaExpiracion: [null],
+      fechaExpiracion: [null, Validators.required],
       vacantes: [1, [Validators.required, Validators.min(1)]],
       edadMin: [18],
       edadMax: [null],
@@ -56,7 +68,8 @@ export class CrearOfertaComponent implements OnInit {
       licenciaId: [null],
       tipoContratoId: ['', Validators.required],
       departamentoId: ['', Validators.required], 
-      municipioId: ['', Validators.required],    
+      municipioId: ['', Validators.required],
+      distritoId: ['', Validators.required],
       generoId: [3], // Asumimos que 3 es 'Indiferente'
 
 
@@ -67,7 +80,7 @@ export class CrearOfertaComponent implements OnInit {
     const sesionStr = localStorage.getItem('userSession'); 
     if (sesionStr) {
       this.sesionActual = JSON.parse(sesionStr) as SessionDTO;
-      this.cargarCatalogos(); // <- AQUÍ: Cargar catálogos
+      this.cargarCatalogos(); 
     } else {
       this.router.navigate(['/login']);
     }
@@ -82,6 +95,66 @@ export class CrearOfertaComponent implements OnInit {
     return null;
   }
 
+  filtrarHabilidades(event: any) {
+    const term = event.target.value.toLowerCase().trim();
+    this.searchTerm = term;
+    if (!term) {
+      this.habilidadesFiltradas = this.todasHabilidades.filter(
+        h => !this.habilidadesSeleccionadas.some(s => s.id === h.id)
+      );
+    } else {
+      this.habilidadesFiltradas = this.todasHabilidades.filter(
+        h => h.nombre.toLowerCase().includes(term) && 
+        !this.habilidadesSeleccionadas.some(s => s.id === h.id)
+      );
+    }
+  }
+
+  seleccionarHabilidad(habilidad: CatalogDTO) {
+    if (!this.habilidadesSeleccionadas.some(s => s.id === habilidad.id)) {
+      this.habilidadesSeleccionadas.push(habilidad);
+      this.searchTerm = '';
+      this.habilidadesFiltradas = this.todasHabilidades.filter(
+        h => !this.habilidadesSeleccionadas.some(s => s.id === h.id)
+      );
+    }
+  }
+
+  deseleccionarHabilidad(habilidad: CatalogDTO) {
+    this.habilidadesSeleccionadas = this.habilidadesSeleccionadas.filter(s => s.id !== habilidad.id);
+    this.filtrarHabilidades({ target: { value: this.searchTerm } });
+  }
+
+  filtrarCarreras(event: any) {
+    const term = event.target.value.toLowerCase().trim();
+    this.carreraSearchTerm = term;
+    if (!term) {
+      this.carrerasFiltradas = this.carreras.filter(
+        c => !this.carrerasSeleccionadas.some(s => s.id === c.id)
+      );
+    } else {
+      this.carrerasFiltradas = this.carreras.filter(
+        c => c.nombre.toLowerCase().includes(term) && 
+        !this.carrerasSeleccionadas.some(s => s.id === c.id)
+      );
+    }
+  }
+
+  seleccionarCarrera(carrera: CatalogDTO) {
+    if (!this.carrerasSeleccionadas.some(s => s.id === carrera.id)) {
+      this.carrerasSeleccionadas.push(carrera);
+      this.carreraSearchTerm = '';
+      this.carrerasFiltradas = this.carreras.filter(
+        c => !this.carrerasSeleccionadas.some(s => s.id === c.id)
+      );
+    }
+  }
+
+  deseleccionarCarrera(carrera: CatalogDTO) {
+    this.carrerasSeleccionadas = this.carrerasSeleccionadas.filter(s => s.id !== carrera.id);
+    this.filtrarCarreras({ target: { value: this.carreraSearchTerm } });
+  }
+
   publicarOferta() {
     if (this.ofertaForm.valid && this.sesionActual) {
       this.isLoading = true;
@@ -89,6 +162,7 @@ export class CrearOfertaComponent implements OnInit {
       this.successMessage = '';
 
       const formValues = this.ofertaForm.value;
+      const requisitosTexto = this.habilidadesSeleccionadas.map(h => h.nombre).join(', ');
       
       const modeloEnvio: OfertaLaboralCreate = {
         ...formValues,
@@ -97,13 +171,16 @@ export class CrearOfertaComponent implements OnInit {
         salarioMin: formValues.salarioMin ? Number(formValues.salarioMin) : null,
         salarioMax: formValues.salarioMax ? Number(formValues.salarioMax) : null,
         tipoContratoId: formValues.tipoContratoId ? Number(formValues.tipoContratoId) : null,
-        municipioId: formValues.municipioId ? Number(formValues.municipioId) : null,
+        distritoId: formValues.distritoId ? Number(formValues.distritoId) : null,
         generoId: formValues.generoId ? Number(formValues.generoId) : null,
         licenciaId: formValues.licenciaId && formValues.licenciaId !== 'null' ? Number(formValues.licenciaId) : null,
-        carreraIds: [] // Si necesitas un selector de carreras, puedes agregarlo después.
+        carreraIds: this.carrerasSeleccionadas.map(c => c.id),
+        requisitos: requisitosTexto,
+        habilidadIds: this.habilidadesSeleccionadas.map(h => h.id)
       };
 
-      delete (modeloEnvio as any).departamentoId; // Limpiamos campos no requeridos por la API
+      delete (modeloEnvio as any).departamentoId;
+      delete (modeloEnvio as any).municipioId;
 
       console.log("Sesion actual completa: ", this.sesionActual);
       console.log("Modelo a enviar: ", modeloEnvio);
@@ -115,6 +192,7 @@ export class CrearOfertaComponent implements OnInit {
           if (res.status) {
             this.successMessage = '¡Oferta laboral publicada!';
             this.ofertaForm.reset({}); 
+            this.habilidadesSeleccionadas = [];
             setTimeout(() => this.router.navigate(['/mis-ofertas']), 2000);
           } else {
             this.errorMessage = res.msg || 'Error al publicar la oferta.';
@@ -134,7 +212,10 @@ export class CrearOfertaComponent implements OnInit {
   }
 
   cargarCatalogos() {
-    this.catalogosService.obtenerCarreras().subscribe(res => this.carreras = res.value);
+    this.catalogosService.obtenerCarreras().subscribe(res => {
+      this.carreras = res.value || [];
+      this.carrerasFiltradas = this.carreras;
+    });
     this.catalogosService.obtenerModalidades().subscribe(res => this.modalidades = res.value);
     this.catalogosService.obtenerNivelesIdioma().subscribe(res => this.nivelesIdioma = res.value);
     this.catalogosService.obtenerGradosAcademicos().subscribe(res => this.gradosAcademicos = res.value);
@@ -142,19 +223,33 @@ export class CrearOfertaComponent implements OnInit {
     this.catalogosService.obtenerDepartamentos().subscribe(res => this.departamentos = res.value);
     this.catalogosService.obtenerTiposLicencia().subscribe(res => this.licencias = res.value);
     this.catalogosService.obtenerGeneros().subscribe(res => this.generos = res.value);
-    // Municipios se cargan dinámicamente cuando se selecciona un departamento
+    this.catalogosService.obtenerHabilidades().subscribe(res => {
+      this.todasHabilidades = res.value || [];
+      this.habilidadesFiltradas = this.todasHabilidades;
+    });
   } 
 
   onDepartamentoChange(event: any) {
     const departamentoId = event.target.value;
+    this.municipios = [];
+    this.distritos = [];
+    this.ofertaForm.get('municipioId')?.setValue('');
+    this.ofertaForm.get('distritoId')?.setValue('');
     if (departamentoId) {
       this.catalogosService.obtenerMunicipios(departamentoId).subscribe(res => {
         this.municipios = res.value;
-        this.ofertaForm.get('municipioId')?.setValue(''); // Reset municipio when departamento changes
       });
-    } else {
-      this.municipios = [];
-      this.ofertaForm.get('municipioId')?.setValue('');
+    }
+  }
+
+  onMunicipioChange(event: any) {
+    const municipioId = event.target.value;
+    this.distritos = [];
+    this.ofertaForm.get('distritoId')?.setValue('');
+    if (municipioId) {
+      this.catalogosService.obtenerDistritos(municipioId).subscribe(res => {
+        this.distritos = res.value;
+      });
     }
   }
 

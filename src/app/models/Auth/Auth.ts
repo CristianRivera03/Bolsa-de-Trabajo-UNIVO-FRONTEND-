@@ -11,3 +11,12 @@ export interface SessionDTO {
     nombreCompleto: string;
     token: string;
 }
+
+export interface RecuperarPasswordDTO {
+    email: string;
+}
+
+export interface RestablecerPasswordDTO {
+    token: string;
+    nuevaPassword: string;
+}
