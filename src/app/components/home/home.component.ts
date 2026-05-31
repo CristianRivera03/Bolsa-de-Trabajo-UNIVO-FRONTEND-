@@ -16,6 +16,12 @@ export class HomeComponent implements OnInit {
   ofertasOriginales: OfertaLaboral[] = [];
   ofertas: OfertaLaboral[] = [];
   filtroActivo: string = 'Todas';
+  carrerasDisponibles: string[] = [];
+  mostrarFiltros: boolean = false;
+
+  toggleFiltros() {
+    this.mostrarFiltros = !this.mostrarFiltros;
+  }
   private ofertaLaboralService = inject(OfertaLaboralService);
 
   // Este método se ejecuta automáticamente al cargar el componente
@@ -30,6 +36,7 @@ export class HomeComponent implements OnInit {
         if (res.status) {
           console.log("Ofertas cargadas:", res.value);
           this.ofertasOriginales = res.value;
+          this.extraerCarrerasDisponibles();
           this.filtrar('Todas');
         }
       },
@@ -39,22 +46,35 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  extraerCarrerasDisponibles() {
+    const carrerasSet = new Set<string>();
+    this.ofertasOriginales.forEach(oferta => {
+      if (oferta.carreras && oferta.carreras.length > 0) {
+        oferta.carreras.forEach(c => carrerasSet.add(c));
+      }
+    });
+    this.carrerasDisponibles = Array.from(carrerasSet).sort();
+  }
+
   private router = inject(Router);
 
   filtrar(filtro: string) {
     this.filtroActivo = filtro;
     if (filtro === 'Todas') {
       this.ofertas = [...this.ofertasOriginales];
-    } else if (filtro === 'Ingeniería') {
+    } else {
       this.ofertas = this.ofertasOriginales.filter(o => 
-        o.carreras && o.carreras.some(c => c.toLowerCase().includes('ingenier'))
-      );
-    } else if (filtro === 'Pasantías') {
-      this.ofertas = this.ofertasOriginales.filter(o => 
-        (o.tipoContratoNombre && o.tipoContratoNombre.toLowerCase().includes('pasantia')) ||
-        (o.modalidadNombre && o.modalidadNombre.toLowerCase().includes('pasantía'))
+        o.carreras && o.carreras.includes(filtro)
       );
     }
+  }
+
+  filtrarPorPasantia() {
+    this.filtroActivo = 'Pasantías';
+    this.ofertas = this.ofertasOriginales.filter(o => 
+      (o.tipoContratoNombre && o.tipoContratoNombre.toLowerCase().includes('pasantia')) ||
+      (o.modalidadNombre && o.modalidadNombre.toLowerCase().includes('pasantía'))
+    );
   }
 
   getModalidadClass(modalidad: string): string {

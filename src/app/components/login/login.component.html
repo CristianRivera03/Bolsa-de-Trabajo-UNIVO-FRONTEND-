@@ -48,6 +48,13 @@
             </button>
           </label>
         </div>
+        <!-- Error de credenciales -->
+        <div *ngIf="loginError" class="flex items-center gap-2 bg-error/10 border border-error/30 text-error rounded-xl px-4 py-3 text-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 flex-shrink-0">
+            <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14Zm0-4a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 1 1.5 0v4.5A.75.75 0 0 1 8 11Zm0 2.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
+          </svg>
+          <span>Usuario o contraseña incorrectos. Por favor, intenta de nuevo.</span>
+        </div>
         <div class="text-right">
           <a routerLink="/auth/olvide-password" class="link link-hover text-info text-[11px] font-semibold transition-colors hover:text-primary">
             ¿Olvidaste tu contraseña?

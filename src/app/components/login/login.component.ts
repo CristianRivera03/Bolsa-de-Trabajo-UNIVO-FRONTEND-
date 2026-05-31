@@ -13,6 +13,7 @@ import { AuthService } from '../../services/Auth/auth.service';
 export class LoginComponent {
 
   showPassword = false;
+  loginError = false;
 
   togglePassword() {
     this.showPassword = !this.showPassword;
@@ -35,6 +36,7 @@ export class LoginComponent {
   }
 
   onSubmit() {
+    this.loginError = false;
     if (this.loginForm.valid) {
       this.authService.Login(this.loginForm.value).subscribe({
         next: (response) => {
@@ -49,7 +51,7 @@ export class LoginComponent {
         },
         error: (err) => {
           console.error("error de autenficacion", err);
-          alert("No se pudo iniciar sesion");
+          this.loginError = true;
         }
       })
     }
