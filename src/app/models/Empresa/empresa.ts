@@ -34,7 +34,7 @@ export interface EmpresaCreateDTO {
   email: string;
   password: string;
   nombreComercial: string;
-  sector: string;
+  sectorId: number;
   descripcion?: string;
   sitioWeb?: string;
 }
@@ -42,7 +42,7 @@ export interface EmpresaCreateDTO {
 // DTO de Actualización
 export interface EmpresaUpdateDTO {
   nombreComercial: string;
-  sector: string;
+  sectorId?: number;
   descripcion?: string;
   sitioWeb?: string;
   logoUrl?: string;

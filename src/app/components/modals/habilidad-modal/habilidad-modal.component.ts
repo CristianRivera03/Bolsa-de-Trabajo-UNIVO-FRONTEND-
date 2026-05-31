@@ -24,6 +24,27 @@ export class ModalHabilidadComponent implements OnInit {
   
   catalogoHabilidades: any[] = []; 
 
+  // Autocomplete state
+  isOpen = false;
+  searchQuery = '';
+
+  get filteredHabilidades() {
+    if (!this.searchQuery) return this.catalogoHabilidades;
+    return this.catalogoHabilidades.filter(h => h.nombre.toLowerCase().includes(this.searchQuery.toLowerCase()));
+  }
+
+  seleccionarHabilidad(nombre: string) {
+    this.habilidadForm.patchValue({ habilidadTexto: nombre });
+    this.searchQuery = nombre;
+    this.isOpen = false;
+  }
+
+  onSearch(event: any) {
+    this.searchQuery = event.target.value;
+    this.habilidadForm.patchValue({ habilidadTexto: this.searchQuery });
+    this.isOpen = true;
+  }
+
   constructor() {
     this.iniciarFormulario();
   }
@@ -34,7 +55,7 @@ export class ModalHabilidadComponent implements OnInit {
 
   iniciarFormulario() {
     this.habilidadForm = this.fb.group({
-      habilidadId: ['', Validators.required], // El ID del catálogo
+      habilidadTexto: ['', Validators.required], // El texto de la habilidad
       nivelDominio: [3, [Validators.required, Validators.min(1), Validators.max(5)]] // Rango del 1 al 5
     });
   }
@@ -55,16 +76,19 @@ export class ModalHabilidadComponent implements OnInit {
       // MODO EDICIÓN
       this.habilidadIdActual = hab.habilidadId;
       this.habilidadForm.patchValue({
-        habilidadId: hab.habilidadId,
+        habilidadTexto: hab.nombreHabilidad,
         nivelDominio: hab.nivelDominio
       });
-      // Bloqueamos el select para que en modo edición solo pueda cambiar el nivel
-      this.habilidadForm.get('habilidadId')?.disable(); 
+      this.searchQuery = hab.nombreHabilidad;
+      // Bloqueamos el input para que en modo edición solo pueda cambiar el nivel
+      this.habilidadForm.get('habilidadTexto')?.disable(); 
     } else {
       // MODO CREACIÓN
       this.habilidadIdActual = null;
       this.habilidadForm.reset({ nivelDominio: 3 });
-      this.habilidadForm.get('habilidadId')?.enable();
+      this.searchQuery = '';
+      this.isOpen = false;
+      this.habilidadForm.get('habilidadTexto')?.enable();
     }
     
     if (modal) modal.showModal();
@@ -72,6 +96,7 @@ export class ModalHabilidadComponent implements OnInit {
 
   cerrar() {
     const modal = document.getElementById('modal_habilidad') as HTMLDialogElement;
+    this.isOpen = false;
     if (modal) modal.close();
   }
 
@@ -83,15 +108,23 @@ export class ModalHabilidadComponent implements OnInit {
 
     this.isLoading = true;
     
-    // Obtenemos los valores. Usamos getRawValue() por si bloqueamos el select en edición
+    // Obtenemos los valores. Usamos getRawValue() por si bloqueamos el input en edición
     const formValues = this.habilidadForm.getRawValue();
-    const habIdNumber = Number(formValues.habilidadId);
+    const textoHabilidad = formValues.habilidadTexto;
 
-    const habSeleccionada = this.catalogoHabilidades.find(h => h.id === habIdNumber);
+    const habSeleccionada = this.catalogoHabilidades.find(h => h.nombre.toLowerCase() === textoHabilidad.toLowerCase());
+
+    if (!habSeleccionada) {
+      alert('Por favor, seleccione una habilidad válida de la lista. Las habilidades solo pueden ser creadas por el Administrador.');
+      this.isLoading = false;
+      return;
+    }
+
+    const habIdNumber = habSeleccionada.id;
 
     const dto: EstudianteHabilidadDTO = {
       habilidadId: habIdNumber,
-      nombreHabilidad: habSeleccionada ? habSeleccionada.nombre : '', // Inyectamos el nombre para el Backend
+      nombreHabilidad: habSeleccionada.nombre, 
       nivelDominio: Number(formValues.nivelDominio)
     };
 

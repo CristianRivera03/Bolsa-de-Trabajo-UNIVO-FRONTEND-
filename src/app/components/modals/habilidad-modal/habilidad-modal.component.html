@@ -1,5 +1,5 @@
 <dialog id="modal_habilidad" class="modal modal-bottom sm:modal-middle">
-  <div class="modal-box sm:w-11/12 sm:max-w-md bg-base-100">
+  <div class="modal-box sm:w-11/12 sm:max-w-md bg-base-100 overflow-visible">
     
     <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" (click)="cerrar()">✕</button>
 
@@ -15,16 +15,36 @@
     <form [formGroup]="habilidadForm" (ngSubmit)="guardar()">
       <div class="flex flex-col gap-4">
         
-        <div class="form-control">
-          <label class="label"><span class="label-text font-medium">Habilidad</span></label>
-          <select formControlName="habilidadId" class="select select-bordered w-full">
-            <option value="" disabled>Seleccione del catálogo...</option>
-            @for (hab of catalogoHabilidades; track hab.id) {
-              <option [value]="hab.id">{{ hab.nombre }}</option>
-            }
-          </select>
-          @if (habilidadForm.get('habilidadId')?.disabled) {
-            <span class="label-text-alt text-base-content/60 mt-1">Para cambiar la habilidad, elimínela y cree una nueva.</span>
+        <div class="form-control relative">
+          <!-- Backdrop to close dropdown -->
+          <div *ngIf="isOpen" class="fixed inset-0 z-40" (click)="isOpen = false"></div>
+
+          <label class="label relative z-10"><span class="label-text font-medium">Habilidad</span></label>
+          <input type="text"
+                 class="input input-bordered w-full relative z-50 cursor-pointer"
+                 [value]="searchQuery"
+                 (input)="onSearch($event)"
+                 (focus)="isOpen = true"
+                 placeholder="Escriba para buscar o seleccione..."
+                 [disabled]="habilidadForm.get('habilidadTexto')?.disabled" />
+                 
+          <!-- Custom Dropdown List -->
+          <div *ngIf="isOpen && !habilidadForm.get('habilidadTexto')?.disabled" 
+               class="absolute left-0 top-[76px] w-full bg-base-100 border border-base-300 rounded-lg shadow-2xl z-50 max-h-56 overflow-y-auto custom-scrollbar">
+            <ul class="menu menu-sm w-full p-1.5 gap-0.5">
+              <li *ngIf="filteredHabilidades.length === 0">
+                <span class="text-base-content/50 italic py-2">No se encontraron habilidades</span>
+              </li>
+              <li *ngFor="let hab of filteredHabilidades">
+                <a (click)="seleccionarHabilidad(hab.nombre)" class="font-medium hover:bg-primary/10 hover:text-primary rounded-md py-2">
+                  {{hab.nombre}}
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          @if (habilidadForm.get('habilidadTexto')?.disabled) {
+            <span class="label-text-alt text-base-content/60 mt-1 relative z-10">Para cambiar la habilidad, elimínela y cree una nueva.</span>
           }
         </div>
 

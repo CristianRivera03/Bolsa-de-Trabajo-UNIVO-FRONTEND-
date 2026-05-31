@@ -13,7 +13,9 @@ import { Router } from '@angular/router';
 })
 // Implementamos OnInit
 export class HomeComponent implements OnInit { 
+  ofertasOriginales: OfertaLaboral[] = [];
   ofertas: OfertaLaboral[] = [];
+  filtroActivo: string = 'Todas';
   private ofertaLaboralService = inject(OfertaLaboralService);
 
   // Este método se ejecuta automáticamente al cargar el componente
@@ -27,7 +29,8 @@ export class HomeComponent implements OnInit {
       next: (res) => {
         if (res.status) {
           console.log("Ofertas cargadas:", res.value);
-          this.ofertas = res.value;
+          this.ofertasOriginales = res.value;
+          this.filtrar('Todas');
         }
       },
       error: (err) => {
@@ -37,6 +40,22 @@ export class HomeComponent implements OnInit {
   }
 
   private router = inject(Router);
+
+  filtrar(filtro: string) {
+    this.filtroActivo = filtro;
+    if (filtro === 'Todas') {
+      this.ofertas = [...this.ofertasOriginales];
+    } else if (filtro === 'Ingeniería') {
+      this.ofertas = this.ofertasOriginales.filter(o => 
+        o.carreras && o.carreras.some(c => c.toLowerCase().includes('ingenier'))
+      );
+    } else if (filtro === 'Pasantías') {
+      this.ofertas = this.ofertasOriginales.filter(o => 
+        (o.tipoContratoNombre && o.tipoContratoNombre.toLowerCase().includes('pasantia')) ||
+        (o.modalidadNombre && o.modalidadNombre.toLowerCase().includes('pasantía'))
+      );
+    }
+  }
 
   getModalidadClass(modalidad: string): string {
     // Es importante que el string coincida exactamente con lo que viene de la DB

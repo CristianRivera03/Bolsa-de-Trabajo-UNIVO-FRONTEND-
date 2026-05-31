@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../services/Admin/admin.service';
 import { AdminDashboardStatsDTO, UsuarioDTO, AdminEmpresaDTO } from '../../models/Admin/admin';
 import { OfertaLaboral } from '../../models/OfertasLaborales/oferta-laboral';
+import { CatalogosService } from '../../services/Catalogo/catalogos.service';
+import { CatalogDTO } from '../../models/Catalog/catalog';
 
 @Component({
   selector: 'app-admin',
@@ -14,9 +16,10 @@ import { OfertaLaboral } from '../../models/OfertasLaborales/oferta-laboral';
 })
 export class AdminComponent implements OnInit {
   private adminService = inject(AdminService);
+  private catalogosService = inject(CatalogosService);
 
   // Active Tab
-  activeTab: 'dashboard' | 'usuarios' | 'empresas' | 'ofertas' = 'dashboard';
+  activeTab: 'dashboard' | 'usuarios' | 'empresas' | 'ofertas' | 'catalogos' = 'dashboard';
 
   // Loading States
   loadingStats: boolean = false;
@@ -49,11 +52,20 @@ export class AdminComponent implements OnInit {
   confirmMessage: string = '';
   pendingAction: (() => void) | null = null;
 
+  // Catalogs
+  activeCatalogTab: 'habilidades' | 'sectores' | 'carreras' = 'habilidades';
+  habilidades: CatalogDTO[] = [];
+  sectores: CatalogDTO[] = [];
+  carreras: CatalogDTO[] = [];
+  loadingCatalog: boolean = false;
+  newCatalogName: string = '';
+
   ngOnInit(): void {
     this.loadStats();
     this.loadUsers();
     this.loadCompanies();
     this.loadJobPosts();
+    this.loadCatalogData();
   }
 
   // --- Data Loading ---
@@ -124,6 +136,79 @@ export class AdminComponent implements OnInit {
         console.error(err);
         this.loadingJobs = false;
       }
+    });
+  }
+
+  // --- Catalogs Logic ---
+  loadCatalogData(): void {
+    this.loadingCatalog = true;
+    if (this.activeCatalogTab === 'habilidades') {
+      this.catalogosService.obtenerHabilidades().subscribe({
+        next: (res) => { this.habilidades = res.value || []; this.loadingCatalog = false; },
+        error: () => this.loadingCatalog = false
+      });
+    } else if (this.activeCatalogTab === 'sectores') {
+      this.catalogosService.obtenerSectores().subscribe({
+        next: (res) => { this.sectores = res.value || []; this.loadingCatalog = false; },
+        error: () => this.loadingCatalog = false
+      });
+    } else if (this.activeCatalogTab === 'carreras') {
+      this.catalogosService.obtenerCarreras().subscribe({
+        next: (res) => { this.carreras = res.value || []; this.loadingCatalog = false; },
+        error: () => this.loadingCatalog = false
+      });
+    }
+  }
+
+  setCatalogTab(tab: 'habilidades' | 'sectores' | 'carreras'): void {
+    this.activeCatalogTab = tab;
+    this.newCatalogName = '';
+    this.loadCatalogData();
+  }
+
+  addCatalogItem(): void {
+    if (!this.newCatalogName.trim()) return;
+    const dto: CatalogDTO = { id: 0, nombre: this.newCatalogName.trim() };
+    this.loadingCatalog = true;
+
+    const action = 
+      this.activeCatalogTab === 'habilidades' ? this.catalogosService.crearHabilidad(dto) :
+      this.activeCatalogTab === 'sectores' ? this.catalogosService.crearSector(dto) :
+      this.catalogosService.crearCarrera(dto);
+
+    action.subscribe({
+      next: (res) => {
+        if (res.status) {
+          this.newCatalogName = '';
+          this.loadCatalogData();
+        } else {
+          alert(res.msg);
+          this.loadingCatalog = false;
+        }
+      },
+      error: (err) => { console.error(err); this.loadingCatalog = false; }
+    });
+  }
+
+  deleteCatalogItem(id: number, nombre: string): void {
+    this.openConfirmModal('Eliminar Elemento', `¿Está seguro de que desea eliminar "${nombre}"?`, () => {
+      this.loadingCatalog = true;
+      const action = 
+        this.activeCatalogTab === 'habilidades' ? this.catalogosService.eliminarHabilidad(id) :
+        this.activeCatalogTab === 'sectores' ? this.catalogosService.eliminarSector(id) :
+        this.catalogosService.eliminarCarrera(id);
+
+      action.subscribe({
+        next: (res) => {
+          if (res.status) {
+            this.loadCatalogData();
+          } else {
+            alert(res.msg);
+            this.loadingCatalog = false;
+          }
+        },
+        error: (err) => { console.error(err); this.loadingCatalog = false; }
+      });
     });
   }
 

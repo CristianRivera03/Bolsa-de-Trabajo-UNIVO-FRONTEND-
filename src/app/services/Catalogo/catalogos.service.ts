@@ -63,4 +63,32 @@ export class CatalogosService {
     return this.http.get<ResponseAPI<CatalogDTO[]>>(`${this.apiUrl}habilidades`);
   }
 
+  obtenerSectores(): Observable<ResponseAPI<CatalogDTO[]>> {
+    return this.http.get<ResponseAPI<CatalogDTO[]>>(`${this.apiUrl}sectores`);
+  }
+
+  // --- CRUD ADMIN ---
+  crearHabilidad(dto: CatalogDTO): Observable<ResponseAPI<CatalogDTO>> {
+    return this.http.post<ResponseAPI<CatalogDTO>>(`${this.apiUrl}habilidades`, dto);
+  }
+
+  eliminarHabilidad(id: number): Observable<ResponseAPI<boolean>> {
+    return this.http.delete<ResponseAPI<boolean>>(`${this.apiUrl}habilidades/${id}`);
+  }
+
+  crearSector(dto: CatalogDTO): Observable<ResponseAPI<CatalogDTO>> {
+    return this.http.post<ResponseAPI<CatalogDTO>>(`${this.apiUrl}sectores`, dto);
+  }
+
+  eliminarSector(id: number): Observable<ResponseAPI<boolean>> {
+    return this.http.delete<ResponseAPI<boolean>>(`${this.apiUrl}sectores/${id}`);
+  }
+
+  crearCarrera(dto: CatalogDTO): Observable<ResponseAPI<CatalogDTO>> {
+    return this.http.post<ResponseAPI<CatalogDTO>>(`${this.apiUrl}carreras`, dto);
+  }
+
+  eliminarCarrera(id: number): Observable<ResponseAPI<boolean>> {
+    return this.http.delete<ResponseAPI<boolean>>(`${this.apiUrl}carreras/${id}`);
+  }
 }

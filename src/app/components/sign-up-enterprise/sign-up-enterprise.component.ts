@@ -6,29 +6,34 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { EnterpriseService } from '../../services/Enterprise/enterprise.service';
 import { EmpresaCreateDTO } from '../../models/Empresa/empresa';
+import { CatalogosService } from '../../services/Catalogo/catalogos.service';
+import { CatalogDTO } from '../../models/Catalog/catalog';
 
 @Component({
   selector: 'app-sign-up-enterprise',
   standalone: true,
-  imports: [ ReactiveFormsModule , CommonModule ],
+  imports: [ ReactiveFormsModule , CommonModule, RouterModule ],
   templateUrl: './sign-up-enterprise.component.html',
 })
 export class SignUpEnterpriseComponent {
   empresaForm: FormGroup;
   isLoading = false;
   errorMessage = '';
+  sectores: CatalogDTO[] = [];
 
   private enterpriseService = inject(EnterpriseService);
+  private catalogosService = inject(CatalogosService);
   private router = inject(Router);
 
   constructor(private fb: FormBuilder) {
     this.empresaForm = this.fb.group(
       {
         nombreComercial: ['', Validators.required],
-        sector: ['', Validators.required],
+        sectorId: ['', Validators.required],
+        descripcion: ['', Validators.required],
         sitioWeb: [''],
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(6)]],
@@ -36,6 +41,16 @@ export class SignUpEnterpriseComponent {
       },
       { validators: this.passwordMatchValidator },
     );
+  }
+
+  ngOnInit() {
+    this.catalogosService.obtenerSectores().subscribe({
+      next: (res) => {
+        if (res.status && res.value) {
+          this.sectores = res.value;
+        }
+      }
+    });
   }
 
   // Validador personalizado para confirmar que las contraseñas coinciden

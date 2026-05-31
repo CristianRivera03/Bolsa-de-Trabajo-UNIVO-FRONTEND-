@@ -135,6 +135,13 @@
       <span class="material-symbols-outlined text-[18px]">work</span>
       Ofertas
     </button>
+    <button 
+      class="tab flex-1 md:flex-none gap-2 rounded-lg py-3 px-4 font-semibold text-sm transition-all duration-200"
+      [class.tab-active]="activeTab === 'catalogos'"
+      (click)="activeTab = 'catalogos'">
+      <span class="material-symbols-outlined text-[18px]">category</span>
+      Catálogos
+    </button>
   </div>
 
   <!-- TAB CONTENT -->
@@ -465,6 +472,86 @@
             </button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- 5. CATALOGOS TAB -->
+    <div *ngIf="activeTab === 'catalogos'" class="space-y-6 animate-fade-in">
+      <div class="flex justify-between items-center border-b border-base-200 pb-4">
+        <div>
+          <h2 class="text-xl font-bold text-base-content">Catálogos del Sistema</h2>
+          <p class="text-xs text-base-content/50">Gestione Habilidades, Sectores y Carreras disponibles en la plataforma.</p>
+        </div>
+      </div>
+
+      <!-- Sub tabs for catalogs -->
+      <div class="tabs tabs-bordered">
+        <a class="tab font-semibold" [class.tab-active]="activeCatalogTab === 'habilidades'" (click)="setCatalogTab('habilidades')">Habilidades</a>
+        <a class="tab font-semibold" [class.tab-active]="activeCatalogTab === 'sectores'" (click)="setCatalogTab('sectores')">Sectores</a>
+        <a class="tab font-semibold" [class.tab-active]="activeCatalogTab === 'carreras'" (click)="setCatalogTab('carreras')">Carreras</a>
+      </div>
+
+      <div class="flex gap-4 items-center bg-base-200/30 p-4 rounded-xl border border-base-200">
+        <input type="text" [placeholder]="'Añadir nueva ' + activeCatalogTab + '...'" class="input input-bordered input-sm flex-1 max-w-xs" [(ngModel)]="newCatalogName" />
+        <button class="btn btn-sm btn-primary" (click)="addCatalogItem()" [disabled]="!newCatalogName.trim() || loadingCatalog">
+          <span class="material-symbols-outlined text-[18px]">add</span> Agregar
+        </button>
+      </div>
+
+      <div class="overflow-x-auto w-full">
+        <table class="table w-full">
+          <thead>
+            <tr class="bg-base-200/50">
+              <th>ID</th>
+              <th>Nombre</th>
+              <th class="text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="loadingCatalog">
+              <td colspan="3" class="text-center py-8"><span class="loading loading-spinner loading-md text-primary"></span></td>
+            </tr>
+            <!-- Habilidades -->
+            <ng-container *ngIf="activeCatalogTab === 'habilidades' && !loadingCatalog">
+              <tr *ngIf="habilidades.length === 0">
+                <td colspan="3" class="text-center py-6 text-base-content/50">No hay habilidades registradas.</td>
+              </tr>
+              <tr *ngFor="let item of habilidades" class="hover:bg-base-200/30 transition-colors">
+                <td class="font-mono text-xs">{{ item.id }}</td>
+                <td class="font-bold text-sm">{{ item.nombre }}</td>
+                <td class="text-right">
+                  <button class="btn btn-xs btn-error btn-outline" (click)="deleteCatalogItem(item.id, item.nombre)">Eliminar</button>
+                </td>
+              </tr>
+            </ng-container>
+            <!-- Sectores -->
+            <ng-container *ngIf="activeCatalogTab === 'sectores' && !loadingCatalog">
+              <tr *ngIf="sectores.length === 0">
+                <td colspan="3" class="text-center py-6 text-base-content/50">No hay sectores registrados.</td>
+              </tr>
+              <tr *ngFor="let item of sectores" class="hover:bg-base-200/30 transition-colors">
+                <td class="font-mono text-xs">{{ item.id }}</td>
+                <td class="font-bold text-sm">{{ item.nombre }}</td>
+                <td class="text-right">
+                  <button class="btn btn-xs btn-error btn-outline" (click)="deleteCatalogItem(item.id, item.nombre)">Eliminar</button>
+                </td>
+              </tr>
+            </ng-container>
+            <!-- Carreras -->
+            <ng-container *ngIf="activeCatalogTab === 'carreras' && !loadingCatalog">
+              <tr *ngIf="carreras.length === 0">
+                <td colspan="3" class="text-center py-6 text-base-content/50">No hay carreras registradas.</td>
+              </tr>
+              <tr *ngFor="let item of carreras" class="hover:bg-base-200/30 transition-colors">
+                <td class="font-mono text-xs">{{ item.id }}</td>
+                <td class="font-bold text-sm">{{ item.nombre }}</td>
+                <td class="text-right">
+                  <button class="btn btn-xs btn-error btn-outline" (click)="deleteCatalogItem(item.id, item.nombre)">Eliminar</button>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
       </div>
     </div>
 

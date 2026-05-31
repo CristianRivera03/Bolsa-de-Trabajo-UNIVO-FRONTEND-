@@ -62,20 +62,24 @@
 
           <div class="form-control">
             <label for="sector" class="label py-1"><span class="label-text font-bold text-xs">Sector Industrial <span class="text-error">*</span></span></label>
-            <select id="sector" formControlName="sector" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm">
+            <select id="sector" formControlName="sectorId" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm">
               <option value="" disabled selected>Seleccione un sector</option>
-              <option value="Tecnología">Tecnología y Software</option>
-              <option value="Alimentos">Alimentos y Consumo</option>
-              <option value="Servicios">Servicios Profesionales</option>
-              <option value="Finanzas">Finanzas y Banca</option>
-              <option value="Otro">Otro</option>
+              <option *ngFor="let s of sectores" [value]="s.id">{{ s.nombre }}</option>
             </select>
-            <label *ngIf="empresaForm.get('sector')?.touched && empresaForm.get('sector')?.invalid" class="label py-1">
+            <label *ngIf="empresaForm.get('sectorId')?.touched && empresaForm.get('sectorId')?.invalid" class="label py-1">
               <span class="label-text-alt text-error">Seleccione un sector</span>
             </label>
           </div>
 
-          <div class="form-control">
+          <div class="form-control md:col-span-2">
+            <label for="descripcion" class="label py-1"><span class="label-text font-bold text-xs">Descripción de la Empresa <span class="text-error">*</span></span></label>
+            <textarea id="descripcion" formControlName="descripcion" class="textarea textarea-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm h-24" placeholder="Breve descripción de los productos, servicios o misión de la empresa..."></textarea>
+            <label *ngIf="empresaForm.get('descripcion')?.touched && empresaForm.get('descripcion')?.invalid" class="label py-1">
+              <span class="label-text-alt text-error">La descripción es requerida</span>
+            </label>
+          </div>
+
+          <div class="form-control md:col-span-2">
             <label for="sitioWeb" class="label py-1"><span class="label-text font-bold text-xs">Sitio Web (Opcional)</span></label>
             <input id="sitioWeb" formControlName="sitioWeb" type="url" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm" placeholder="https://www.empresa.com" />
           </div>
