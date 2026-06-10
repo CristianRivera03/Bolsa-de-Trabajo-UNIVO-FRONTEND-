@@ -12,6 +12,7 @@ export interface EmpresaDTO {
   id: number;
   usuarioId: number;
   nombreComercial: string;
+  sectorId?: number;
   sector: string;
   descripcion?: string;
   sitioWeb?: string;
@@ -19,7 +20,10 @@ export interface EmpresaDTO {
 
   razonSocial?: string;
   nit?: string;
-  direccion?: string;
+  departamentoId?: number;
+  municipioId?: number;
+  distritoId?: number;
+  distritoNombre?: string;
   telefonoFijo?: string;
   correoInstitucional?: string;
   facebook?: string;
@@ -49,7 +53,9 @@ export interface EmpresaUpdateDTO {
 
   razonSocial?: string;
   nit?: string;
-  direccion?: string;
+  departamentoId?: number;
+  municipioId?: number;
+  distritoId?: number;
   telefonoFijo?: string;
   correoInstitucional?: string;
   facebook?: string;

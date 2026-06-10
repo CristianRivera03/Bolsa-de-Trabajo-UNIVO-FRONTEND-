@@ -8,7 +8,10 @@ export interface PerfilEstudianteDTO {
     genero: string;
     fechaNacimiento?: string; 
     telefono?: string;
-    direccion?: string;
+    departamentoId?: number;
+    municipioId?: number;
+    distritoId?: number;
+    distritoNombre?: string;
     sobreMi?: string;
     fotoUrl?: string;
     enlaceGitHub?: string;
@@ -30,7 +33,9 @@ export interface PerfilEstudianteUpdateDTO {
     nombres?: string;
     apellidos?: string;
     telefono?: string;
-    direccion?: string;
+    departamentoId?: number;
+    municipioId?: number;
+    distritoId?: number;
     sobreMi?: string;
     fotoUrl?: string;
     enlaceGitHub?: string;

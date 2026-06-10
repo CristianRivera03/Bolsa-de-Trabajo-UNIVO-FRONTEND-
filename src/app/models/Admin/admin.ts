@@ -40,3 +40,20 @@ export interface AuditLogDTO {
   fecha: string;
   usuarioId?: number;
 }
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  totalRecords: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface AuditLogFilterDTO {
+  pageNumber?: number;
+  pageSize?: number;
+  tabla?: string;
+  accion?: string;
+  fechaInicio?: string;
+  fechaFin?: string;
+}

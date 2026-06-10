@@ -42,10 +42,15 @@ export class SignUpEnterpriseComponent {
     this.empresaForm = this.fb.group(
       {
         nombreComercial: ['', Validators.required],
+        razonSocial: ['', Validators.required],
+        nit: ['', [Validators.required, Validators.minLength(17), Validators.maxLength(17)]],
         sectorId: ['', Validators.required],
         descripcion: ['', Validators.required],
         sitioWeb: [''],
         email: ['', [Validators.required, Validators.email]],
+        contactoNombre: ['', Validators.required],
+        contactoTelefono: ['', [Validators.required, Validators.minLength(8)]],
+        contactoDui: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(10)]],
         password: ['', [Validators.required, Validators.minLength(6)]],
         confirmPassword: ['', Validators.required],
       },
@@ -61,6 +66,44 @@ export class SignUpEnterpriseComponent {
         }
       }
     });
+  }
+
+  // Auto-formato de NIT (XXXX-XXXXXX-XXX-X)
+  formatNit(event: Event) {
+    const input = event.target as HTMLInputElement;
+    let value = input.value.replace(/\D/g, ''); // Remover todo lo que no sea dígito
+    if (value.length > 14) {
+      value = value.substring(0, 14);
+    }
+    
+    let formatted = value;
+    if (value.length > 4) {
+      formatted = value.substring(0, 4) + '-' + value.substring(4);
+    }
+    if (value.length > 10) {
+      formatted = formatted.substring(0, 11) + '-' + formatted.substring(11);
+    }
+    if (value.length > 13) {
+      formatted = formatted.substring(0, 15) + '-' + formatted.substring(15);
+    }
+    
+    this.empresaForm.get('nit')?.setValue(formatted, { emitEvent: false });
+  }
+
+  // Auto-formato de DUI (XXXXXXXX-X)
+  formatDui(event: Event) {
+    const input = event.target as HTMLInputElement;
+    let value = input.value.replace(/\D/g, ''); // Remover todo lo que no sea dígito
+    if (value.length > 9) {
+      value = value.substring(0, 9);
+    }
+
+    let formatted = value;
+    if (value.length > 8) {
+      formatted = value.substring(0, 8) + '-' + value.substring(8);
+    }
+    
+    this.empresaForm.get('contactoDui')?.setValue(formatted, { emitEvent: false });
   }
 
   // Validador personalizado para confirmar que las contraseñas coinciden

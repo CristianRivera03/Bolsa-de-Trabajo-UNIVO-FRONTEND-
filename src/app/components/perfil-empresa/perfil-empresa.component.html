@@ -62,18 +62,16 @@
 
             <div class="form-control">
               <label class="label">
-                <span class="label-text font-medium" [class.text-error]="empresaForm.get('sector')?.touched && empresaForm.get('sector')?.invalid">Sector *</span>
+                <span class="label-text font-medium" [class.text-error]="empresaForm.get('sectorId')?.touched && empresaForm.get('sectorId')?.invalid">Sector *</span>
               </label>
-              <select formControlName="sector" class="select select-bordered w-full"
-                      [class.select-error]="empresaForm.get('sector')?.touched && empresaForm.get('sector')?.invalid">
-                <option value="" disabled>Selecciona un sector...</option>
-                <option value="Tecnología">Tecnología y Software</option>
-                <option value="Alimentos">Alimentos y Bebidas</option>
-                <option value="Finanzas">Banca y Finanzas</option>
-                <option value="Educación">Educación</option>
-                <option value="Salud">Salud y Farmacéutica</option>
+              <select formControlName="sectorId" class="select select-bordered w-full"
+                      [class.select-error]="empresaForm.get('sectorId')?.touched && empresaForm.get('sectorId')?.invalid">
+                <option value="" disabled selected>Selecciona un sector...</option>
+                @for (sector of sectores; track sector.id) {
+                  <option [value]="sector.id">{{ sector.nombre }}</option>
+                }
               </select>
-              @if (empresaForm.get('sector')?.touched && empresaForm.get('sector')?.hasError('required')) {
+              @if (empresaForm.get('sectorId')?.touched && empresaForm.get('sectorId')?.hasError('required')) {
                 <span class="label-text-alt text-error mt-1">Este campo es obligatorio</span>
               }
             </div>
@@ -136,8 +134,33 @@
             </div>
 
             <div class="form-control">
-              <label class="label"><span class="label-text font-medium">Dirección Completa</span></label>
-              <input type="text" formControlName="direccion" class="input input-bordered w-full" placeholder="Dirección física de las oficinas" />
+              <label class="label"><span class="label-text font-medium">Departamento</span></label>
+              <select formControlName="departamentoId" class="select select-bordered w-full" (change)="onDepartamentoChange($event)">
+                <option value="" disabled selected>Seleccione departamento...</option>
+                @for (depto of departamentos; track depto.id) {
+                  <option [value]="depto.id">{{ depto.nombre }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-control">
+              <label class="label"><span class="label-text font-medium">Municipio</span></label>
+              <select formControlName="municipioId" class="select select-bordered w-full" (change)="onMunicipioChange($event)" [disabled]="!municipios.length">
+                <option value="" disabled selected>Seleccione municipio...</option>
+                @for (muni of municipios; track muni.id) {
+                  <option [value]="muni.id">{{ muni.nombre }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-control">
+              <label class="label"><span class="label-text font-medium">Distrito</span></label>
+              <select formControlName="distritoId" class="select select-bordered w-full" [disabled]="!distritos.length">
+                <option value="" disabled selected>Seleccione distrito...</option>
+                @for (dist of distritos; track dist.id) {
+                  <option [value]="dist.id">{{ dist.nombre }}</option>
+                }
+              </select>
             </div>
 
             <div class="form-control">

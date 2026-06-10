@@ -54,6 +54,9 @@ export class PerfilEstudianteComponent implements OnInit {
   carreras: any[] = [];
   nivelesIdioma: any[] = [];
   gradosAcademicos: any[] = [];
+  departamentos: any[] = [];
+  municipios: any[] = [];
+  distritos: any[] = [];
 
   ngOnInit() {
     this.iniciarFormulario();
@@ -67,7 +70,9 @@ export class PerfilEstudianteComponent implements OnInit {
       nombres: ['', Validators.required],
       apellidos: ['', Validators.required],
       telefono: ['', Validators.pattern(/^\d{8}$/)],
-      direccion: [''],
+      departamentoId: [''],
+      municipioId: [''],
+      distritoId: [''],
       sobreMi: ['', Validators.maxLength(500)],
       enlaceLinkedIn: [''],
       enlaceGitHub: [''],
@@ -86,6 +91,9 @@ export class PerfilEstudianteComponent implements OnInit {
     });
     this.catalogosService.obtenerGradosAcademicos().subscribe((res) => {
       if (res.status) this.gradosAcademicos = res.value;
+    });
+    this.catalogosService.obtenerDepartamentos().subscribe((res) => {
+      if (res.status) this.departamentos = res.value;
     });
   }
 
@@ -108,13 +116,26 @@ export class PerfilEstudianteComponent implements OnInit {
             nombres: res.value.nombres,
             apellidos: res.value.apellidos,
             telefono: res.value.telefono,
-            direccion: res.value.direccion, 
+            departamentoId: res.value.departamentoId || '',
+            municipioId: res.value.municipioId || '',
+            distritoId: res.value.distritoId || '',
             sobreMi: res.value.sobreMi,
             enlaceLinkedIn: res.value.enlaceLinkedIn,
             enlaceGitHub: res.value.enlaceGitHub,
             carreraId: res.value.carreraId,
             buscaEmpleo: res.value.buscaEmpleo
           });
+
+          if (res.value.departamentoId) {
+            this.catalogosService.obtenerMunicipios(res.value.departamentoId).subscribe(r => {
+              if (r.status) this.municipios = r.value;
+            });
+          }
+          if (res.value.municipioId) {
+            this.catalogosService.obtenerDistritos(res.value.municipioId).subscribe(r => {
+              if (r.status) this.distritos = r.value;
+            });
+          }
         }
       },
       error: (err) => console.error('Error cargando perfil de estudiante:', err)
@@ -164,7 +185,7 @@ export class PerfilEstudianteComponent implements OnInit {
       const control = this.perfilForm.get(key);
       
       if (control && control.dirty) {
-        if (key === 'carreraId') {
+        if (key === 'carreraId' || key === 'distritoId') {
           dtoParcial[key as keyof PerfilEstudianteUpdateDTO] = control.value ? Number(control.value) : null as any;
         } else {
           dtoParcial[key as keyof PerfilEstudianteUpdateDTO] = control.value;
@@ -197,6 +218,34 @@ export class PerfilEstudianteComponent implements OnInit {
         console.error(err);
       }
     });
+  }
+
+  // =========================================================
+  // MÉTODOS PARA GESTIONAR UBICACION
+  // =========================================================
+  onDepartamentoChange(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    const deptoId = Number(target.value);
+    this.municipios = [];
+    this.distritos = [];
+    this.perfilForm.patchValue({ municipioId: '', distritoId: '' });
+    if (deptoId) {
+      this.catalogosService.obtenerMunicipios(deptoId).subscribe((res) => {
+        if (res.status) this.municipios = res.value;
+      });
+    }
+  }
+
+  onMunicipioChange(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    const muniId = Number(target.value);
+    this.distritos = [];
+    this.perfilForm.patchValue({ distritoId: '' });
+    if (muniId) {
+      this.catalogosService.obtenerDistritos(muniId).subscribe((res) => {
+        if (res.status) this.distritos = res.value;
+      });
+    }
   }
 
   // =========================================================

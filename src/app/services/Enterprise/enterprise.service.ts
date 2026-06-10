@@ -24,6 +24,10 @@ export class EnterpriseService {
     return this.http.get<ResponseAPI<EmpresaDTO>>(`${this.apiUrl}MiPerfil`);
   }
 
+  getEmpresaById(id: number): Observable<ResponseAPI<EmpresaDTO>> {
+    return this.http.get<ResponseAPI<EmpresaDTO>>(`${this.apiUrl}${id}`);
+  }
+
   updateMiPerfil(dto: EmpresaUpdateDTO): Observable<ResponseAPI<EmpresaDTO>> {
     return this.http.put<ResponseAPI<EmpresaDTO>>(`${this.apiUrl}MiPerfil`, dto);
   }

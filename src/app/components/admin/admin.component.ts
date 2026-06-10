@@ -81,6 +81,35 @@ export class AdminComponent implements OnInit {
   filtroEmpFechaFin: string = '';
   filtroEmpSectorId: string = '';
 
+  // Local Pagination Settings
+  localPageSize: number = 10;
+  
+  usersCurrentPage: number = 1;
+  get pagedUsers(): UsuarioDTO[] {
+    const startIndex = (this.usersCurrentPage - 1) * this.localPageSize;
+    return this.filteredUsers.slice(startIndex, startIndex + this.localPageSize);
+  }
+  get usersTotalPages(): number { return Math.ceil(this.filteredUsers.length / this.localPageSize) || 1; }
+
+  companiesCurrentPage: number = 1;
+  get pagedCompanies(): AdminEmpresaDTO[] {
+    const startIndex = (this.companiesCurrentPage - 1) * this.localPageSize;
+    return this.filteredCompanies.slice(startIndex, startIndex + this.localPageSize);
+  }
+  get companiesTotalPages(): number { return Math.ceil(this.filteredCompanies.length / this.localPageSize) || 1; }
+
+  jobsCurrentPage: number = 1;
+  get pagedJobs(): OfertaLaboral[] {
+    const startIndex = (this.jobsCurrentPage - 1) * this.localPageSize;
+    return this.filteredJobs.slice(startIndex, startIndex + this.localPageSize);
+  }
+  get jobsTotalPages(): number { return Math.ceil(this.filteredJobs.length / this.localPageSize) || 1; }
+
+  // Audit Logs Server-Side Pagination & Filters
+  auditFilter: any = { pageNumber: 1, pageSize: 20, tabla: '', accion: '', fechaInicio: '', fechaFin: '' };
+  auditTotalRecords: number = 0;
+  auditTotalPages: number = 0;
+
   departamentosSV = [
     'Ahuachapán', 'Cabañas', 'Chalatenango', 'Cuscatlán', 'La Libertad',
     'La Paz', 'La Unión', 'Morazán', 'San Miguel', 'San Salvador',
@@ -120,6 +149,11 @@ export class AdminComponent implements OnInit {
     this.loadUsers();
     this.loadCompanies();
     this.loadJobPosts();
+    
+    // Cargar catálogos en segundo plano para mapeo de IDs en la Bitácora
+    this.catalogosService.obtenerSectores().subscribe(res => { if (res.value) this.sectores = res.value; });
+    this.catalogosService.obtenerCarreras().subscribe(res => { if (res.value) this.carreras = res.value; });
+    
     this.loadCatalogData();
     this.loadAuditLogs();
   }
@@ -146,10 +180,12 @@ export class AdminComponent implements OnInit {
 
   loadAuditLogs(): void {
     this.loadingAuditoria = true;
-    this.adminService.getAuditLogs().subscribe({
+    this.adminService.getAuditLogs(this.auditFilter).subscribe({
       next: (res) => {
         if (res.status && res.value) {
-          this.auditLogs = res.value;
+          this.auditLogs = res.value.items;
+          this.auditTotalRecords = res.value.totalRecords;
+          this.auditTotalPages = res.value.totalPages;
         } else {
           this.errorMsg = res.msg || 'No se pudo cargar el registro de auditoría.';
         }
@@ -161,6 +197,23 @@ export class AdminComponent implements OnInit {
         this.loadingAuditoria = false;
       }
     });
+  }
+
+  changeAuditPage(newPage: number): void {
+    if (newPage >= 1 && newPage <= this.auditTotalPages) {
+      this.auditFilter.pageNumber = newPage;
+      this.loadAuditLogs();
+    }
+  }
+
+  applyAuditFilter(): void {
+    this.auditFilter.pageNumber = 1; // Reset to page 1 on new filter
+    this.loadAuditLogs();
+  }
+
+  clearAuditFilter(): void {
+    this.auditFilter = { pageNumber: 1, pageSize: 20, tabla: '', accion: '', fechaInicio: '', fechaFin: '' };
+    this.loadAuditLogs();
   }
 
   toggleLogDetail(id: number): void {
@@ -194,13 +247,49 @@ export class AdminComponent implements OnInit {
       .map(([k, v]) => ({ campo: this.fieldLabels[k] ?? k, valor: v }));
   }
 
-  formatAuditValue(value: any): string {
+  formatAuditValue(campo: string, value: any): string {
     if (value === null || value === undefined) return '—';
     if (typeof value === 'boolean') return value ? 'Sí' : 'No';
     if (typeof value === 'string' && value.match(/^\d{4}-\d{2}-\d{2}T/)) {
       return new Date(value).toLocaleString('es-SV');
     }
+    
+    // Mapear IDs a Nombres
+    if (campo === 'Sector' && typeof value === 'number') {
+      const sector = this.sectores.find(s => s.id === value);
+      if (sector) return sector.nombre;
+    }
+    if (campo === 'Carrera' && typeof value === 'number') {
+      const carrera = this.carreras.find(c => c.id === value);
+      if (carrera) return carrera.nombre;
+    }
+
     return String(value);
+  }
+
+  getEntityName(tabla: string, id: number | string): string {
+    if (!id) return 'Desconocido';
+    const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+    switch (tabla.toLowerCase()) {
+      case 'usuarios':
+        const u = this.users.find(x => x.id === numId);
+        return u ? `${u.email} (#${id})` : `#${id}`;
+      case 'empresas':
+        const e = this.companies.find(x => x.id === numId);
+        return e ? `${e.nombreComercial} (#${id})` : `#${id}`;
+      case 'ofertaslaborales':
+      case 'ofertalaboral':
+        const o = this.jobPosts.find(x => x.id === numId);
+        return o ? `${o.titulo} (#${id})` : `#${id}`;
+      default:
+        return `#${id}`;
+    }
+  }
+
+  getUserDisplayName(usuarioId: number | null | undefined): string {
+    if (!usuarioId) return 'Sistema';
+    const user = this.users.find(u => u.id === usuarioId);
+    return user ? user.email : `Usuario ${usuarioId}`;
   }
 
   loadUsers(): void {
@@ -329,6 +418,7 @@ export class AdminComponent implements OnInit {
 
   // --- Filtering Logic ---
   applyUserFilter(): void {
+    this.usersCurrentPage = 1; // Reset to page 1 on search
     const q = this.userSearch.toLowerCase().trim();
     if (!q) {
       this.filteredUsers = [...this.users];
@@ -341,6 +431,7 @@ export class AdminComponent implements OnInit {
   }
 
   applyCompanyFilter(): void {
+    this.companiesCurrentPage = 1; // Reset to page 1 on search
     const q = this.companySearch.toLowerCase().trim();
     if (!q) {
       this.filteredCompanies = [...this.companies];
@@ -354,6 +445,7 @@ export class AdminComponent implements OnInit {
   }
 
   applyJobFilter(): void {
+    this.jobsCurrentPage = 1; // Reset to page 1 on search
     const q = this.jobSearch.toLowerCase().trim();
     if (!q) {
       this.filteredJobs = [...this.jobPosts];

@@ -15,16 +15,16 @@
       </div>
       
       <div class="form-control flex-1 w-full">
-        <label class="label"><span class="label-text font-bold text-base-content/70">Carrera / Área</span></label>
-        <select class="select select-bordered w-full rounded-xl" [(ngModel)]="searchCarreraId" (change)="buscar()">
+        <label class="label" for="carreraSelect"><span class="label-text font-bold text-base-content/70">Carrera / Área</span></label>
+        <select id="carreraSelect" class="select select-bordered w-full rounded-xl" [(ngModel)]="searchCarreraId" (change)="buscar()" title="Selecciona una carrera o área">
           <option value="">Todas las carreras</option>
           <option *ngFor="let c of carrerasTodas" [value]="c.id">{{ c.nombre }}</option>
         </select>
       </div>
 
       <div class="form-control flex-1 w-full">
-        <label class="label"><span class="label-text font-bold text-base-content/70">Sector Industrial</span></label>
-        <select class="select select-bordered w-full rounded-xl" [(ngModel)]="searchSectorId" (change)="buscar()">
+        <label class="label" for="sectorSelect"><span class="label-text font-bold text-base-content/70">Sector Industrial</span></label>
+        <select id="sectorSelect" class="select select-bordered w-full rounded-xl" [(ngModel)]="searchSectorId" (change)="buscar()">
           <option value="">Todos los sectores</option>
           <option *ngFor="let s of sectoresDisponibles" [value]="s.id">{{ s.nombre }}</option>
         </select>

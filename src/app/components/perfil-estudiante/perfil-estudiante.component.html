@@ -69,8 +69,33 @@
           </div>
 
           <div class="form-control">
-            <label class="label" for="direccion"><span class="label-text font-medium">Dirección</span></label>
-            <input type="text" id="direccion" formControlName="direccion" class="input input-bordered input-sm w-full" />
+            <label class="label" for="departamentoId"><span class="label-text font-medium">Departamento</span></label>
+            <select id="departamentoId" formControlName="departamentoId" class="select select-bordered select-sm w-full" (change)="onDepartamentoChange($event)">
+              <option value="" disabled selected>Seleccione departamento...</option>
+              @for (depto of departamentos; track depto.id) {
+                <option [value]="depto.id">{{ depto.nombre }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-control">
+            <label class="label" for="municipioId"><span class="label-text font-medium">Municipio</span></label>
+            <select id="municipioId" formControlName="municipioId" class="select select-bordered select-sm w-full" (change)="onMunicipioChange($event)" [disabled]="!municipios.length">
+              <option value="" disabled selected>Seleccione municipio...</option>
+              @for (muni of municipios; track muni.id) {
+                <option [value]="muni.id">{{ muni.nombre }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-control">
+            <label class="label" for="distritoId"><span class="label-text font-medium">Distrito</span></label>
+            <select id="distritoId" formControlName="distritoId" class="select select-bordered select-sm w-full" [disabled]="!distritos.length">
+              <option value="" disabled selected>Seleccione distrito...</option>
+              @for (dist of distritos; track dist.id) {
+                <option [value]="dist.id">{{ dist.nombre }}</option>
+              }
+            </select>
           </div>
 
           <div class="form-control mt-2 p-3 bg-base-200 rounded-lg">

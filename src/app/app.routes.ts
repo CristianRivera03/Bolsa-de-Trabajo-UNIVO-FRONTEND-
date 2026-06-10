@@ -13,6 +13,7 @@ import { PostulantesComponent } from './components/postulantes/postulantes.compo
 import { AdminComponent } from './components/admin/admin.component';
 import { OlvidePasswordComponent } from './components/olvide-password/olvide-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { VistaEmpresaComponent } from './components/vista-empresa/vista-empresa.component';
 import { authGuard, empresaGuard, estudianteGuard, adminGuard } from './guards/auth.guard'; 
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -29,6 +30,7 @@ export const routes: Routes = [
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent }, 
             { path: 'oferta/:id', component: OfertaDetalleComponent }, 
+            { path: 'empresa/:id', component: VistaEmpresaComponent },
             { 
                 path: 'crear-oferta', 
                 component: CrearOfertaComponent, 

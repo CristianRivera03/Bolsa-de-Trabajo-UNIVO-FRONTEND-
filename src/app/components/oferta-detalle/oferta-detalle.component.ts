@@ -5,6 +5,7 @@ import { OfertaLaboral } from '../../models/OfertasLaborales/oferta-laboral';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CryptoUtil } from '../../utils/crypto.util';
+import { HashService } from '../../services/hash.service';
 
 import {ModalPostulacionComponent} from '../modals/postulacion-modal/postulacion-modal.component'; // <-- Ajusta la ruta a donde guardaste tu modal
 
@@ -37,6 +38,7 @@ export class OfertaDetalleComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private location = inject(Location);
+  private hashService = inject(HashService);
   isLoading = true;
 
   // 3. CAPTURAR EL MODAL CON VIEWCHILD
@@ -47,9 +49,15 @@ export class OfertaDetalleComponent implements OnInit {
   }
 
   loadOferta() {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.ofertaLaboralService.obtenerPorId(+id).subscribe({
+    const hashId = this.route.snapshot.paramMap.get('id');
+    if (hashId) {
+      const realId = this.hashService.decode(hashId);
+      if (!realId) {
+        this.isLoading = false;
+        // Opcional: Redirigir a 404 o Home si el ID es inválido
+        return;
+      }
+      this.ofertaLaboralService.obtenerPorId(realId).subscribe({
         next: (res) => {
           if (res.status) {
             this.oferta = res.value;
@@ -75,5 +83,9 @@ export class OfertaDetalleComponent implements OnInit {
     if (this.oferta) {
       this.modalPostulacion.abrir(this.oferta.id, this.oferta.titulo);
     }
+  }
+
+  getEmpresaHash(id: number): string {
+    return this.hashService.encode(id);
   }
 }

@@ -18,10 +18,10 @@
         <label class="label">
           <span class="label-text font-medium">Mensaje de presentación</span>
         </label>
-        <textarea formControlName="mensaje" class="textarea textarea-bordered h-32 leading-tight" 
+        <textarea formControlName="mensaje" class="textarea textarea-bordered h-32 leading-tight w-full resize-none" 
                   placeholder="Escribe un breve mensaje destacando por qué eres el candidato ideal para este puesto..."></textarea>
         <label class="label">
-          <span class="label-text-alt text-base-content/60">
+          <span class="label-text-alt text-sm text-base-content/50 whitespace-pre-wrap py-2">
             Tu currículum digital de la universidad se adjuntará automáticamente a esta postulación.
           </span>
         </label>
@@ -29,7 +29,7 @@
 
       <div class="modal-action mt-4 border-t pt-4">
         <button type="button" class="btn btn-ghost" (click)="cerrar()" [disabled]="isLoading">Cancelar</button>
-        <button type="submit" class="btn btn-primary min-w-[120px]" [disabled]="postulacionForm.invalid || isLoading">
+        <button type="submit" class="btn btn-primary min-w-30" [disabled]="postulacionForm.invalid || isLoading">
           @if (isLoading) {
             <span class="loading loading-spinner loading-sm"></span> Enviando...
           } @else {

@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { CatalogosService } from '../../services/Catalogo/catalogos.service';
 import { OfertaLaboralService } from '../../services/OfertasLaborales/oferta-laboral.service';
 import { OfertaLaboral } from '../../models/OfertasLaborales/oferta-laboral';
+import { HashService } from '../../services/hash.service';
 
 @Component({
   selector: 'app-home',
@@ -32,6 +33,7 @@ export class HomeComponent implements OnInit {
   }
   private ofertaLaboralService = inject(OfertaLaboralService);
   private catalogosService = inject(CatalogosService);
+  private hashService = inject(HashService);
 
   // Este método se ejecuta automáticamente al cargar el componente
   ngOnInit(): void {
@@ -51,7 +53,6 @@ export class HomeComponent implements OnInit {
     this.ofertaLaboralService.lista(this.searchKeyword, cId, sId).subscribe({
       next: (res) => {
         if (res.status) {
-          console.log("Ofertas cargadas:", res.value);
           this.ofertasOriginales = res.value;
           this.extraerCarrerasDisponibles();
           this.filtrar('Todas');
@@ -95,7 +96,6 @@ export class HomeComponent implements OnInit {
   }
 
   getModalidadClass(modalidad: string): string {
-    // Es importante que el string coincida exactamente con lo que viene de la DB
     if (!modalidad) return 'badge-ghost';
     
     switch (modalidad.trim()) {
@@ -107,6 +107,6 @@ export class HomeComponent implements OnInit {
   }
 
   verDetalle(id: number) {
-    this.router.navigate(['/dashboard/oferta', id]);
+    this.router.navigate(['/dashboard/oferta', this.hashService.encode(id)]);
   }
 }

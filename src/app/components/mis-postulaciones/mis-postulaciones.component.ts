@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import {PostulacionDTO , CreatePostulacionDTO} from '../../models/OfertasLaborales/postulacion';
 import { PostulacionService } from '../../services/OfertasLaborales/postulacion.service';
-
+import { HashService } from '../../services/hash.service';
 
 @Component({
   selector: 'app-mis-postulaciones',
@@ -13,6 +13,7 @@ import { PostulacionService } from '../../services/OfertasLaborales/postulacion.
 })
 export class MisPostulacionesComponent implements OnInit {
   private postulacionService = inject(PostulacionService);
+  private hashService = inject(HashService);
 
   postulaciones: PostulacionDTO[] = [];
   isLoading = true;
@@ -51,5 +52,9 @@ export class MisPostulacionesComponent implements OnInit {
       default:
         return 'badge-ghost'; // Gris por defecto
     }
+  }
+
+  getHash(id: number): string {
+    return this.hashService.encode(id);
   }
 }

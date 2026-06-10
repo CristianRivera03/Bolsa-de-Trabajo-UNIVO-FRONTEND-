@@ -56,21 +56,38 @@
         </div>
       </div>
 
-      <form [formGroup]="empresaForm" (ngSubmit)="registrarEmpresa()" class="flex-grow flex flex-col animate-fade-in">
+      <form [formGroup]="empresaForm" (ngSubmit)="registrarEmpresa()" class="grow flex flex-col animate-fade-in">
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4 mb-6">
           
           <div class="form-control md:col-span-2">
             <label for="nombreComercial" class="label py-1"><span class="label-text font-bold text-xs">Nombre Comercial <span class="text-error">*</span></span></label>
-            <input id="nombreComercial" formControlName="nombreComercial" type="text" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm" placeholder="Ej. Grupo Lorena , Negocios de Oriente, etc." />
+            <input id="nombreComercial" formControlName="nombreComercial" type="text" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm w-full" placeholder="Ej. Universidad de Oriente, Negocios de Oriente, etc." />
             <label *ngIf="empresaForm.get('nombreComercial')?.touched && empresaForm.get('nombreComercial')?.invalid" class="label py-1">
-              <span class="label-text-alt text-error">El nombre de la empresa es requerido</span>
+              <span class="label-text-alt text-error">El nombre comercial es requerido</span>
+            </label>
+          </div>
+
+          <div class="form-control md:col-span-1">
+            <label for="razonSocial" class="label py-1"><span class="label-text font-bold text-xs">Razón Social <span class="text-error">*</span></span></label>
+            <input id="razonSocial" formControlName="razonSocial" type="text" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm w-full" placeholder="Razón social legal" />
+            <label *ngIf="empresaForm.get('razonSocial')?.touched && empresaForm.get('razonSocial')?.invalid" class="label py-1">
+              <span class="label-text-alt text-error">La razón social es requerida</span>
+            </label>
+          </div>
+
+          <div class="form-control md:col-span-1">
+            <label for="nit" class="label py-1"><span class="label-text font-bold text-xs">NIT <span class="text-error">*</span></span></label>
+            <input id="nit" formControlName="nit" type="text" (input)="formatNit($event)" maxlength="17" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm w-full" placeholder="0000-000000-000-0" />
+            <label *ngIf="empresaForm.get('nit')?.touched && empresaForm.get('nit')?.invalid" class="label py-1">
+              <span class="label-text-alt text-error" *ngIf="empresaForm.get('nit')?.errors?.['required']">El NIT es requerido</span>
+              <span class="label-text-alt text-error" *ngIf="empresaForm.get('nit')?.errors?.['minlength']">Debe tener 14 dígitos</span>
             </label>
           </div>
 
           <div class="form-control md:col-span-2">
             <label for="sector" class="label py-1"><span class="label-text font-bold text-xs">Sector Industrial <span class="text-error">*</span></span></label>
-            <select id="sector" formControlName="sectorId" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm">
+            <select id="sector" formControlName="sectorId" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm w-full">
               <option value="" disabled selected>Seleccione un sector</option>
               <option *ngFor="let s of sectores" [value]="s.id">{{ s.nombre }}</option>
             </select>
@@ -81,7 +98,7 @@
 
           <div class="form-control md:col-span-2">
             <label for="descripcion" class="label py-1"><span class="label-text font-bold text-xs">Descripción de la Empresa <span class="text-error">*</span></span></label>
-            <textarea id="descripcion" formControlName="descripcion" class="textarea textarea-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm h-24" placeholder="Breve descripción de los productos, servicios o misión de la empresa..."></textarea>
+            <textarea id="descripcion" formControlName="descripcion" class="textarea textarea-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm h-24 w-full" placeholder="Breve descripción de los productos, servicios o misión de la empresa..."></textarea>
             <label *ngIf="empresaForm.get('descripcion')?.touched && empresaForm.get('descripcion')?.invalid" class="label py-1">
               <span class="label-text-alt text-error">La descripción es requerida</span>
             </label>
@@ -89,14 +106,41 @@
 
           <div class="form-control md:col-span-2">
             <label for="sitioWeb" class="label py-1"><span class="label-text font-bold text-xs">Sitio Web (Opcional)</span></label>
-            <input id="sitioWeb" formControlName="sitioWeb" type="url" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm" placeholder="https://www.empresa.com" />
+            <input id="sitioWeb" formControlName="sitioWeb" type="url" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm w-full" placeholder="https://www.empresa.com" />
+          </div>
+
+          <div class="md:col-span-2 divider text-xs text-base-content/50 my-2">Datos de Contacto (RRHH)</div>
+
+          <div class="form-control md:col-span-2">
+            <label for="contactoNombre" class="label py-1"><span class="label-text font-bold text-xs">Nombre Completo del Encargado <span class="text-error">*</span></span></label>
+            <input id="contactoNombre" formControlName="contactoNombre" type="text" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm w-full" placeholder="Nombre de quien maneja RRHH" />
+            <label *ngIf="empresaForm.get('contactoNombre')?.touched && empresaForm.get('contactoNombre')?.invalid" class="label py-1">
+              <span class="label-text-alt text-error">El nombre del contacto es requerido</span>
+            </label>
+          </div>
+
+          <div class="form-control md:col-span-1">
+            <label for="contactoTelefono" class="label py-1"><span class="label-text font-bold text-xs">Teléfono del Encargado <span class="text-error">*</span></span></label>
+            <input id="contactoTelefono" formControlName="contactoTelefono" type="text" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm w-full" placeholder="Ej. 7000-0000" />
+            <label *ngIf="empresaForm.get('contactoTelefono')?.touched && empresaForm.get('contactoTelefono')?.invalid" class="label py-1">
+              <span class="label-text-alt text-error">El teléfono es requerido</span>
+            </label>
+          </div>
+
+          <div class="form-control md:col-span-1">
+            <label for="contactoDui" class="label py-1"><span class="label-text font-bold text-xs">DUI del Encargado <span class="text-error">*</span></span></label>
+            <input id="contactoDui" formControlName="contactoDui" type="text" (input)="formatDui($event)" maxlength="10" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm w-full" placeholder="00000000-0" />
+            <label *ngIf="empresaForm.get('contactoDui')?.touched && empresaForm.get('contactoDui')?.invalid" class="label py-1">
+              <span class="label-text-alt text-error" *ngIf="empresaForm.get('contactoDui')?.errors?.['required']">El DUI es requerido</span>
+              <span class="label-text-alt text-error" *ngIf="empresaForm.get('contactoDui')?.errors?.['minlength']">Formato incorrecto</span>
+            </label>
           </div>
 
           <div class="md:col-span-2 divider text-xs text-base-content/50 my-2">Datos de Acceso</div>
 
           <div class="form-control md:col-span-2">
             <label for="email" class="label py-1"><span class="label-text font-bold text-xs">Correo Electrónico <span class="text-error">*</span></span></label>
-            <input id="email" formControlName="email" type="email" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm" placeholder="rrhh@tuempresa.com" />
+            <input id="email" formControlName="email" type="email" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm w-full" placeholder="rrhh@tuempresa.com" />
             <label *ngIf="empresaForm.get('email')?.touched && empresaForm.get('email')?.invalid" class="label py-1">
               <span class="label-text-alt text-error">Ingrese un correo válido</span>
             </label>
@@ -106,7 +150,7 @@
             <label for="password" class="label py-1"><span class="label-text font-bold text-xs">Contraseña <span class="text-error">*</span></span></label>
             <div class="relative">
               <input id="password" formControlName="password" [type]="showPassword ? 'text' : 'password'" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm w-full pr-10" placeholder="••••••••" />
-              <button type="button" (click)="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-base-content/50 hover:text-primary">
+              <button type="button" (click)="togglePasswordVisibility()" aria-label="Mostrar u ocultar contraseña" title="Mostrar u ocultar contraseña" class="absolute inset-y-0 right-0 pr-3 flex items-center text-base-content/50 hover:text-primary">
                 <svg *ngIf="!showPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
                 <svg *ngIf="showPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>
               </button>
@@ -120,7 +164,7 @@
             <label for="confirmPassword" class="label py-1"><span class="label-text font-bold text-xs">Confirmar Contraseña <span class="text-error">*</span></span></label>
             <div class="relative">
               <input id="confirmPassword" formControlName="confirmPassword" [type]="showConfirmPassword ? 'text' : 'password'" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm w-full pr-10" placeholder="••••••••" />
-              <button type="button" (click)="toggleConfirmPasswordVisibility()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-base-content/50 hover:text-primary">
+              <button type="button" (click)="toggleConfirmPasswordVisibility()" aria-label="Mostrar u ocultar confirmación de contraseña" title="Mostrar u ocultar confirmación de contraseña" class="absolute inset-y-0 right-0 pr-3 flex items-center text-base-content/50 hover:text-primary">
                 <svg *ngIf="!showConfirmPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
                 <svg *ngIf="showConfirmPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>
               </button>

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { EmpresaUpdateDTO } from '../../models/Empresa/empresa';
 import { EnterpriseService } from '../../services/Enterprise/enterprise.service';
+import { CatalogosService } from '../../services/Catalogo/catalogos.service';
 
 @Component({
   selector: 'app-perfil-empresa',
@@ -13,6 +14,7 @@ import { EnterpriseService } from '../../services/Enterprise/enterprise.service'
 export class PerfilEmpresaComponent implements OnInit {
   private fb = inject(FormBuilder);
   private enterpriseService = inject(EnterpriseService);
+  private catalogosService = inject(CatalogosService);
 
   empresaForm!: FormGroup;
   isLoading = true;
@@ -22,23 +24,36 @@ export class PerfilEmpresaComponent implements OnInit {
   isUploadingLogo = false;
   logoUrl: string = 'https://ui-avatars.com/api/?name=Empresa&background=0D8ABC&color=fff';
 
+  departamentos: any[] = [];
+  municipios: any[] = [];
+  distritos: any[] = [];
+  sectores: any[] = [];
+
   ngOnInit() {
     this.iniciarFormulario();
     this.cargarDatosEmpresa();
+    this.catalogosService.obtenerDepartamentos().subscribe((res) => {
+      if (res.status) this.departamentos = res.value;
+    });
+    this.catalogosService.obtenerSectores().subscribe((res) => {
+      if (res.status) this.sectores = res.value;
+    });
   }
 
   iniciarFormulario() {
     this.empresaForm = this.fb.group({
       // Datos Generales
       nombreComercial: ['', Validators.required],
-      sector: ['', Validators.required],
+      sectorId: ['', Validators.required],
       descripcion: ['', [Validators.required, Validators.maxLength(1000)]],
       sitioWeb: [''],
       
       // Datos Legales y Operativos
       razonSocial: [''],
       nit: [''],
-      direccion: [''],
+      departamentoId: [''],
+      municipioId: [''],
+      distritoId: [''],
       telefonoFijo: [''],
       correoInstitucional: ['', Validators.email],
       facebook: [''],
@@ -64,12 +79,14 @@ export class PerfilEmpresaComponent implements OnInit {
           // Llenamos el formulario con los datos de BD
           this.empresaForm.patchValue({
             nombreComercial: res.value.nombreComercial,
-            sector: res.value.sector,
+            sectorId: res.value.sectorId || '',
             descripcion: res.value.descripcion,
             sitioWeb: res.value.sitioWeb,
             razonSocial: res.value.razonSocial,
             nit: res.value.nit,
-            direccion: res.value.direccion,
+            departamentoId: res.value.departamentoId || '',
+            municipioId: res.value.municipioId || '',
+            distritoId: res.value.distritoId || '',
             telefonoFijo: res.value.telefonoFijo,
             correoInstitucional: res.value.correoInstitucional,
             facebook: res.value.facebook,
@@ -83,6 +100,17 @@ export class PerfilEmpresaComponent implements OnInit {
           if (res.value.logoUrl) {
             this.logoUrl = res.value.logoUrl;
           }
+
+          if (res.value.departamentoId) {
+            this.catalogosService.obtenerMunicipios(res.value.departamentoId).subscribe(r => {
+              if (r.status) this.municipios = r.value;
+            });
+          }
+          if (res.value.municipioId) {
+            this.catalogosService.obtenerDistritos(res.value.municipioId).subscribe(r => {
+              if (r.status) this.distritos = r.value;
+            });
+          }
         }
       },
       error: (err) => {
@@ -90,6 +118,34 @@ export class PerfilEmpresaComponent implements OnInit {
         console.error('Error al cargar el perfil de la empresa:', err);
       }
     });
+  }
+
+  // ==========================================
+  // CARGA DE UBICACIONES
+  // ==========================================
+  onDepartamentoChange(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    const deptoId = Number(target.value);
+    this.municipios = [];
+    this.distritos = [];
+    this.empresaForm.patchValue({ municipioId: '', distritoId: '' });
+    if (deptoId) {
+      this.catalogosService.obtenerMunicipios(deptoId).subscribe((res) => {
+        if (res.status) this.municipios = res.value;
+      });
+    }
+  }
+
+  onMunicipioChange(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    const muniId = Number(target.value);
+    this.distritos = [];
+    this.empresaForm.patchValue({ distritoId: '' });
+    if (muniId) {
+      this.catalogosService.obtenerDistritos(muniId).subscribe((res) => {
+        if (res.status) this.distritos = res.value;
+      });
+    }
   }
 
   // ==========================================
@@ -136,8 +192,12 @@ export class PerfilEmpresaComponent implements OnInit {
 
     this.isSaving = true;
     
-    // Obtenemos todos los valores estructurados exactamente como los pide el DTO
-    const dto: EmpresaUpdateDTO = this.empresaForm.value;
+    const formValues = this.empresaForm.value;
+    const dto: EmpresaUpdateDTO = {
+      ...formValues,
+      sectorId: formValues.sectorId ? Number(formValues.sectorId) : null,
+      distritoId: formValues.distritoId ? Number(formValues.distritoId) : null
+    };
 
     this.enterpriseService.updateMiPerfil(dto).subscribe({
       next: (res) => {

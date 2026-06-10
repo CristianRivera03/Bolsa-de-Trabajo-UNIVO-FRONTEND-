@@ -19,36 +19,36 @@
       <form [formGroup]="ofertaForm" (ngSubmit)="publicarOferta()" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div class="form-control md:col-span-2 lg:col-span-3">
           <label for="titulo" class="label py-1"><span class="label-text font-bold text-xs">Título del Puesto <span class="text-error">*</span></span></label>
-          <input id="titulo" formControlName="titulo" type="text" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="Ej. Desarrollador Angular Senior" />
+          <input id="titulo" formControlName="titulo" type="text" class="input input-bordered w-full bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="Ej. Desarrollador Angular Senior" />
         </div>
         <div class="form-control lg:col-span-2">
           <label for="ubicacion" class="label py-1"><span class="label-text font-bold text-xs">Dirección Detallada <span class="text-error">*</span></span></label>
-          <input id="ubicacion" formControlName="ubicacion" type="text" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="Ej. Edificio B, Colonia Escalón" />
+          <input id="ubicacion" formControlName="ubicacion" type="text" class="input input-bordered w-full bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="Ej. Edificio B, Colonia Escalón" />
         </div>
         <div class="form-control">
           <label for="modalidadId" class="label py-1"><span class="label-text font-bold text-xs">Modalidad <span class="text-error">*</span></span></label>
-          <select id="modalidadId" formControlName="modalidadId" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50">
+          <select id="modalidadId" formControlName="modalidadId" class="select select-bordered w-full bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50">
             <option value="" disabled selected>Seleccione una opción</option>
             <option *ngFor="let mod of modalidades" [value]="mod.id">{{ mod.nombre }}</option>
           </select>
         </div>
         <div class="form-control">
           <label for="departamentoId" class="label py-1"><span class="label-text font-bold text-xs">Departamento <span class="text-error">*</span></span></label>
-          <select id="departamentoId" formControlName="departamentoId" (change)="onDepartamentoChange($event)" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50">
+          <select id="departamentoId" formControlName="departamentoId" (change)="onDepartamentoChange($event)" class="select select-bordered w-full bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50">
             <option value="" disabled selected>Seleccione un departamento</option>
             <option *ngFor="let dep of departamentos" [value]="dep.id">{{ dep.nombre }}</option>
           </select>
         </div>
         <div class="form-control">
           <label for="municipioId" class="label py-1"><span class="label-text font-bold text-xs">Municipio <span class="text-error">*</span></span></label>
-          <select id="municipioId" formControlName="municipioId" (change)="onMunicipioChange($event)" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" [attr.disabled]="!municipios.length ? '' : null">
+          <select id="municipioId" formControlName="municipioId" (change)="onMunicipioChange($event)" class="select select-bordered w-full bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" [attr.disabled]="!municipios.length ? '' : null">
             <option value="" disabled selected>Seleccione un municipio</option>
             <option *ngFor="let mun of municipios" [value]="mun.id">{{ mun.nombre }}</option>
           </select>
         </div>
         <div class="form-control">
           <label for="distritoId" class="label py-1"><span class="label-text font-bold text-xs">Distrito <span class="text-error">*</span></span></label>
-          <select id="distritoId" formControlName="distritoId" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" [attr.disabled]="!distritos.length ? '' : null">
+          <select id="distritoId" formControlName="distritoId" class="select select-bordered w-full bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" [attr.disabled]="!distritos.length ? '' : null">
             <option value="" disabled selected>Seleccione un distrito</option>
             <option *ngFor="let dis of distritos" [value]="dis.id">{{ dis.nombre }}</option>
           </select>
@@ -58,24 +58,24 @@
         </div>
         <div class="form-control">
           <label for="tipoContratoId" class="label py-1"><span class="label-text font-bold text-xs">Tipo de Contrato <span class="text-error">*</span></span></label>
-          <select id="tipoContratoId" formControlName="tipoContratoId" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50">
+          <select id="tipoContratoId" formControlName="tipoContratoId" class="select select-bordered w-full bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50">
             <option value="" disabled selected>Seleccione un contrato</option>
             <option *ngFor="let contrato of contratos" [value]="contrato.id">{{ contrato.nombre }}</option>
           </select>
         </div>
         <div class="form-control">
           <label for="vacantes" class="label py-1"><span class="label-text font-bold text-xs">Número de Vacantes <span class="text-error">*</span></span></label>
-          <input id="vacantes" formControlName="vacantes" type="number" min="1" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" />
+          <input id="vacantes" formControlName="vacantes" type="number" min="1" class="input input-bordered w-full bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" />
         </div>
         <div class="form-control">
           <label for="generoId" class="label py-1"><span class="label-text font-bold text-xs">Género Preferido</span></label>
-          <select id="generoId" formControlName="generoId" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50">
+          <select id="generoId" formControlName="generoId" class="select select-bordered w-full bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50">
             <option *ngFor="let genero of generos" [value]="genero.id">{{ genero.nombre }}</option>
           </select>
         </div>
         <div class="form-control">
           <label for="fechaExpiracion" class="label py-1"><span class="label-text font-bold text-xs">Fecha de Expiración <span class="text-error">*</span></span></label>
-          <input id="fechaExpiracion" formControlName="fechaExpiracion" type="date" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50"
+          <input id="fechaExpiracion" formControlName="fechaExpiracion" type="date" class="input input-bordered w-full bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50"
                  [class.input-error]="ofertaForm.get('fechaExpiracion')?.touched && ofertaForm.get('fechaExpiracion')?.invalid" />
           <label class="label py-0 mt-1" *ngIf="ofertaForm.get('fechaExpiracion')?.touched && ofertaForm.get('fechaExpiracion')?.hasError('required')">
             <span class="label-text-alt text-error">La fecha de expiración es obligatoria</span>
@@ -83,7 +83,7 @@
         </div>
         <div class="form-control">
           <label for="salarioMin" class="label py-1"><span class="label-text font-bold text-xs">Salario Min (USD) <span class="text-error">*</span></span></label>
-          <input id="salarioMin" formControlName="salarioMin" type="number" step="0.01" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="600.00"
+          <input id="salarioMin" formControlName="salarioMin" type="number" step="0.01" class="input input-bordered w-full bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="600.00"
                  [class.input-error]="ofertaForm.get('salarioMin')?.touched && ofertaForm.get('salarioMin')?.invalid" />
           <label class="label py-0 mt-1" *ngIf="ofertaForm.get('salarioMin')?.touched && ofertaForm.get('salarioMin')?.hasError('required')">
             <span class="label-text-alt text-error">El salario mínimo es obligatorio</span>
@@ -91,29 +91,28 @@
         </div>
         <div class="form-control">
           <label for="salarioMax" class="label py-1"><span class="label-text font-bold text-xs">Salario Max (USD)</span></label>
-          <input id="salarioMax" formControlName="salarioMax" type="number" step="0.01" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="1000.00" />
+          <input id="salarioMax" formControlName="salarioMax" type="number" step="0.01" class="input input-bordered w-full bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" placeholder="1000.00" />
           <label *ngIf="ofertaForm.hasError('rangoInvalido')" class="label py-1">
             <span class="label-text-alt text-error">El máximo debe ser mayor al mínimo</span>
           </label>
         </div>
-        <div class="form-control hidden lg:block"></div> 
         <div class="form-control">
           <label for="edadMin" class="label py-1"><span class="label-text font-bold text-xs">Edad Mínima</span></label>
-          <input id="edadMin" formControlName="edadMin" type="number" min="18" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" />
+          <input id="edadMin" formControlName="edadMin" type="number" min="18" class="input input-bordered w-full bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" />
         </div>
         <div class="form-control">
           <label for="edadMax" class="label py-1"><span class="label-text font-bold text-xs">Edad Máxima</span></label>
-          <input id="edadMax" formControlName="edadMax" type="number" class="input input-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" />
+          <input id="edadMax" formControlName="edadMax" type="number" class="input input-bordered w-full bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50" />
         </div>
         <div class="form-control">
           <label for="licenciaId" class="label py-1"><span class="label-text font-bold text-xs">Tipo de Licencia</span></label>
-          <select id="licenciaId" formControlName="licenciaId" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50">
+          <select id="licenciaId" formControlName="licenciaId" class="select select-bordered w-full bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50">
             <option [ngValue]="null">Ninguna requerida</option>
             <option *ngFor="let lic of licencias" [value]="lic.id">{{ lic.nombre }}</option>
           </select>
         </div>
-        <div class="form-control flex justify-center mt-6">
-          <label class="cursor-pointer label flex gap-4 justify-start">
+        <div class="form-control lg:col-span-3 flex justify-start mt-2">
+          <label class="cursor-pointer label flex gap-4 justify-start w-fit">
             <input type="checkbox" formControlName="tieneVehiculo" class="toggle toggle-primary" />
             <span class="label-text font-bold text-sm">¿Requiere vehículo propio?</span>
           </label>
@@ -123,7 +122,7 @@
             <span class="label-text font-bold text-xs">Descripción del Puesto <span class="text-error">*</span></span>
             <span class="label-text-alt text-base-content/50">Mín. 20 caracteres</span>
           </label>
-          <textarea id="descripcion" formControlName="descripcion" minlength="20" class="textarea textarea-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 h-32" [class.textarea-error]="ofertaForm.get('descripcion')?.touched && ofertaForm.get('descripcion')?.invalid" placeholder="Describe las responsabilidades, el equipo y la misión del rol..."></textarea>
+          <textarea id="descripcion" formControlName="descripcion" minlength="20" class="textarea textarea-bordered w-full bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 h-32" [class.textarea-error]="ofertaForm.get('descripcion')?.touched && ofertaForm.get('descripcion')?.invalid" placeholder="Describe las responsabilidades, el equipo y la misión del rol..."></textarea>
           <label class="label py-0 mt-1" *ngIf="ofertaForm.get('descripcion')?.touched && ofertaForm.get('descripcion')?.hasError('minlength')">
             <span class="label-text-alt text-error">
               Te faltan {{ 20 - (ofertaForm.get('descripcion')?.value?.length || 0) }} caracteres.
