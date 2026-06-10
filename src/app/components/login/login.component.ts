@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { AuthService } from '../../services/Auth/auth.service';
+import { CryptoUtil } from '../../utils/crypto.util';
 
 @Component({
   selector: 'app-login',
@@ -42,7 +43,7 @@ export class LoginComponent {
         next: (response) => {
           if (response.status === true) {
 
-            localStorage.setItem('userSession', JSON.stringify(response.value));
+            CryptoUtil.saveSession(response.value);
             this.router.navigate(['/dashboard']);
             console.log("login exitoso", response);
             //alert("Welcome");

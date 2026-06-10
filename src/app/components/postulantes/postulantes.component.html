@@ -178,9 +178,16 @@
 
                         <!-- Estado y Descarga de CV -->
                         <div class="flex items-center gap-3 self-end lg:self-auto">
-                          <span class="badge badge-md shadow-sm" [ngClass]="obtenerColorEstado(postulante.estadoNombre)">
-                            {{ postulante.estadoNombre }}
-                          </span>
+                          <select 
+                            class="select select-bordered select-sm w-full max-w-xs"
+                            [ngClass]="obtenerColorEstado(postulante.estadoNombre)"
+                            [ngModel]="obtenerEstadoId(postulante.estadoNombre)"
+                            (change)="actualizarEstado(postulante, $any($event.target).value)"
+                          >
+                            <option *ngFor="let estado of estadosDisponibles" [value]="estado.id">
+                              {{ estado.nombre }}
+                            </option>
+                          </select>
                           
                           <button 
                             class="btn btn-primary btn-sm rounded-lg flex items-center gap-1 shadow-sm hover:scale-[1.02] transition-transform min-w-[125px]"

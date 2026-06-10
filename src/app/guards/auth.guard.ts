@@ -1,10 +1,11 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { CryptoUtil } from '../utils/crypto.util';
 
 // 1. Guard General: Solo verifica que esté logueado
 export const authGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
-  const session = localStorage.getItem('userSession');
+  const session = CryptoUtil.getSession();
 
   if (session) return true;
 
@@ -15,10 +16,9 @@ export const authGuard: CanActivateFn = (route, state) => {
 // 2. Guard para proteger rutas de EMPRESA
 export const empresaGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
-  const sessionStr = localStorage.getItem('userSession');
+  const session = CryptoUtil.getSession();
 
-  if (sessionStr) {
-    const session = JSON.parse(sessionStr);
+  if (session) {
     if (session.rolName === 'Empresa') return true;
   }
 
@@ -29,10 +29,9 @@ export const empresaGuard: CanActivateFn = (route, state) => {
 // 3. Guard para proteger rutas de ESTUDIANTE
 export const estudianteGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
-  const sessionStr = localStorage.getItem('userSession');
+  const session = CryptoUtil.getSession();
 
-  if (sessionStr) {
-    const session = JSON.parse(sessionStr);
+  if (session) {
     // Cambia 'Estudiante' si tu C# devuelve otro texto (ej. 'Alumno')
     if (session.rolName === 'Estudiante') return true; 
   }
@@ -44,10 +43,9 @@ export const estudianteGuard: CanActivateFn = (route, state) => {
 // 4. Guard para proteger rutas de ADMINISTRADOR (UNIVO)
 export const adminGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
-  const sessionStr = localStorage.getItem('userSession');
+  const session = CryptoUtil.getSession();
 
-  if (sessionStr) {
-    const session = JSON.parse(sessionStr);
+  if (session) {
     // Cambia 'Admin' si tu C# devuelve 'Administrador'
     if (session.rolName === 'Administrador') return true;
   }

@@ -1,14 +1,15 @@
 import { Component, OnInit, inject } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { CatalogosService } from '../../services/Catalogo/catalogos.service';
 import { OfertaLaboralService } from '../../services/OfertasLaborales/oferta-laboral.service';
 import { OfertaLaboral } from '../../models/OfertasLaborales/oferta-laboral';
-import { ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './home.component.html',
 })
 // Implementamos OnInit
@@ -18,20 +19,36 @@ export class HomeComponent implements OnInit {
   filtroActivo: string = 'Todas';
   carrerasDisponibles: string[] = [];
   mostrarFiltros: boolean = false;
+  
+  // Variables de Búsqueda Backend
+  searchKeyword: string = '';
+  searchCarreraId: string = '';
+  searchSectorId: string = '';
+  carrerasTodas: any[] = [];
+  sectoresDisponibles: any[] = [];
 
   toggleFiltros() {
     this.mostrarFiltros = !this.mostrarFiltros;
   }
   private ofertaLaboralService = inject(OfertaLaboralService);
+  private catalogosService = inject(CatalogosService);
 
   // Este método se ejecuta automáticamente al cargar el componente
   ngOnInit(): void {
     this.loadPosts();
+    this.catalogosService.obtenerCarreras().subscribe(res => { if(res.value) this.carrerasTodas = res.value; });
+    this.catalogosService.obtenerSectores().subscribe(res => { if(res.value) this.sectoresDisponibles = res.value; });
+  }
+
+  buscar() {
+    this.loadPosts();
   }
 
   loadPosts() {
-    // Asegúrate de que el método en tu servicio se llame 'lista' o 'obtenerTodos'
-    this.ofertaLaboralService.lista().subscribe({
+    const cId = this.searchCarreraId ? Number(this.searchCarreraId) : undefined;
+    const sId = this.searchSectorId ? Number(this.searchSectorId) : undefined;
+    
+    this.ofertaLaboralService.lista(this.searchKeyword, cId, sId).subscribe({
       next: (res) => {
         if (res.status) {
           console.log("Ofertas cargadas:", res.value);

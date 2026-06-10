@@ -1,12 +1,12 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { SessionDTO } from '../models/Auth/Auth';
+import { CryptoUtil } from '../utils/crypto.util';
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
-  const sessionStr = localStorage.getItem('userSession');
+  const session = CryptoUtil.getSession() as SessionDTO;
   
-  if (sessionStr) {
+  if (session) {
     try {
-      const session = JSON.parse(sessionStr) as SessionDTO;
       if (session && session.token) {
         const clonedRequest = req.clone({
           setHeaders: {

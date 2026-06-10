@@ -4,6 +4,7 @@ import { OfertaLaboralService } from '../../services/OfertasLaborales/oferta-lab
 import { OfertaLaboral } from '../../models/OfertasLaborales/oferta-laboral';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { CryptoUtil } from '../../utils/crypto.util';
 
 import {ModalPostulacionComponent} from '../modals/postulacion-modal/postulacion-modal.component'; // <-- Ajusta la ruta a donde guardaste tu modal
 
@@ -23,9 +24,9 @@ export class OfertaDetalleComponent implements OnInit {
   oferta: OfertaLaboral | null = null;
 
   get rolActual(): string {
-    const session = localStorage.getItem('userSession');
+    const session = CryptoUtil.getSession();
     if (!session) return '';
-    return JSON.parse(session)?.rolName ?? '';
+    return session.rolName ?? '';
   }
 
   get puedeAplicar(): boolean {

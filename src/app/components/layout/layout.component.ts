@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SessionDTO } from '../../models/Auth/Auth';
 import { OnInit } from '@angular/core';
+import { CryptoUtil } from '../../utils/crypto.util';
 
 @Component({
   selector: 'app-layout',
@@ -16,9 +17,9 @@ export class LayoutComponent implements OnInit {
   usuarioActual: SessionDTO | null = null;
 
   ngOnInit() {
-    const sessionStr = localStorage.getItem('userSession');
-    if (sessionStr) {
-      this.usuarioActual = JSON.parse(sessionStr);
+    const session = CryptoUtil.getSession();
+    if (session) {
+      this.usuarioActual = session;
     }
     if (window.innerWidth < 768) {
       this.isSidebarExpanded = false;
@@ -44,7 +45,7 @@ export class LayoutComponent implements OnInit {
   }
   
   logout(){
-    localStorage.removeItem('userSession');
+    CryptoUtil.removeSession();
     window.location.href = '/login';
   }
 

@@ -142,6 +142,13 @@
       <span class="material-symbols-outlined text-[18px]">category</span>
       Catálogos
     </button>
+    <button 
+      class="tab flex-1 md:flex-none gap-2 rounded-lg py-3 px-4 font-semibold text-sm transition-all duration-200"
+      [class.tab-active]="activeTab === 'auditoria'"
+      (click)="activeTab = 'auditoria'">
+      <span class="material-symbols-outlined text-[18px]">history</span>
+      Auditoría
+    </button>
   </div>
 
   <!-- TAB CONTENT -->
@@ -154,9 +161,17 @@
           <span class="material-symbols-outlined text-primary">analytics</span>
           Resumen de la Plataforma
         </h2>
-        <button class="btn btn-sm btn-ghost btn-circle text-primary" (click)="loadStats()" [disabled]="loadingStats">
-          <span class="material-symbols-outlined" [class.animate-spin]="loadingStats">refresh</span>
-        </button>
+        <div class="flex gap-2">
+          <button class="btn btn-sm btn-outline btn-primary shadow-sm" (click)="openReporteCandidatosModal()">
+            <span class="material-symbols-outlined text-[18px]">download</span> Reporte Candidatos
+          </button>
+          <button class="btn btn-sm btn-outline btn-secondary shadow-sm" (click)="openReporteEmpresasModal()">
+            <span class="material-symbols-outlined text-[18px]">download</span> Reporte Empresas
+          </button>
+          <button class="btn btn-sm btn-ghost btn-circle text-primary" (click)="loadStats()" [disabled]="loadingStats">
+            <span class="material-symbols-outlined" [class.animate-spin]="loadingStats">refresh</span>
+          </button>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -555,6 +570,139 @@
       </div>
     </div>
 
+    <!-- 6. AUDITORIA TAB -->
+    <div *ngIf="activeTab === 'auditoria'" class="space-y-4 animate-fade-in">
+      <div class="flex justify-between items-center border-b border-base-200 pb-4">
+        <div>
+          <h2 class="text-xl font-bold text-base-content flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">history</span>
+            Registro de Auditoría
+          </h2>
+          <p class="text-xs text-base-content/50">Historial reciente · haz clic en una fila para ver los detalles del cambio.</p>
+        </div>
+        <button class="btn btn-sm btn-ghost btn-circle text-primary" (click)="loadAuditLogs()" [disabled]="loadingAuditoria">
+          <span class="material-symbols-outlined" [class.animate-spin]="loadingAuditoria">refresh</span>
+        </button>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="loadingAuditoria" class="text-center py-12">
+        <span class="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+
+      <!-- Empty -->
+      <div *ngIf="!loadingAuditoria && auditLogs.length === 0" class="text-center py-12 text-base-content/40 border-2 border-dashed border-base-200 rounded-2xl">
+        <span class="material-symbols-outlined text-5xl block mb-2 opacity-30">history_toggle_off</span>
+        No hay registros de auditoría disponibles.
+      </div>
+
+      <!-- Log Cards -->
+      <div *ngFor="let log of auditLogs" class="border border-base-200 rounded-xl overflow-hidden transition-all duration-200 hover:shadow-md">
+
+        <!-- Row Summary (clickable) -->
+        <div 
+          class="flex flex-wrap items-center gap-x-4 gap-y-2 p-4 cursor-pointer select-none hover:bg-base-200/30 transition-colors"
+          (click)="toggleLogDetail(log.id)">
+
+          <!-- Acción badge -->
+          <span class="badge font-bold uppercase text-xs shrink-0 px-3 py-2"
+            [ngClass]="{
+              'badge-success text-white': log.accion === 'Creación',
+              'badge-info text-white':    log.accion === 'Modificación',
+              'badge-error text-white':   log.accion === 'Eliminación'
+            }">
+            <span class="material-symbols-outlined text-[14px] mr-1">
+              {{ log.accion === 'Creación' ? 'add_circle' : log.accion === 'Modificación' ? 'edit' : 'delete' }}
+            </span>
+            {{ log.accion }}
+          </span>
+
+          <!-- Tabla -->
+          <span class="font-bold text-sm text-base-content">{{ log.nombreTabla }}</span>
+          <span class="text-base-content/40 text-xs">#{{ log.registroId }}</span>
+
+          <span class="flex-1"></span>
+
+          <!-- Usuario -->
+          <span class="flex items-center gap-1 text-xs text-base-content/50">
+            <span class="material-symbols-outlined text-[14px]">person</span>
+            Usuario {{ log.usuarioId ?? 'Sistema' }}
+          </span>
+
+          <!-- Fecha -->
+          <span class="flex items-center gap-1 text-xs text-base-content/50 whitespace-nowrap">
+            <span class="material-symbols-outlined text-[14px]">schedule</span>
+            {{ log.fecha | date:'dd/MM/yy, h:mm a' }}
+          </span>
+
+          <!-- Expand chevron -->
+          <span class="material-symbols-outlined text-base-content/30 transition-transform duration-200"
+            [class.rotate-180]="expandedLogId === log.id">
+            expand_more
+          </span>
+        </div>
+
+        <!-- ── DETAIL PANEL ── -->
+        <div *ngIf="expandedLogId === log.id" class="border-t border-base-200 bg-base-50 p-4 space-y-3 animate-fade-in">
+
+          <!-- MODIFICACIÓN: diff table -->
+          <ng-container *ngIf="log.accion === 'Modificación'">
+            <p class="text-xs font-bold text-base-content/50 uppercase tracking-widest mb-2">Campos modificados</p>
+            <div *ngIf="getDiffEntries(log).length === 0" class="text-xs text-base-content/40 italic">
+              Sin diferencias detectadas.
+            </div>
+            <div *ngFor="let diff of getDiffEntries(log)" 
+              class="grid grid-cols-[1fr_auto_1fr] items-start gap-2 text-xs bg-base-100 rounded-lg p-3 border border-base-200">
+              <!-- Campo nombre -->
+              <div class="col-span-3 text-[10px] font-bold uppercase tracking-widest text-base-content/40 mb-1">
+                {{ diff.campo }}
+              </div>
+              <!-- Valor anterior -->
+              <div class="bg-error/10 text-error rounded px-2 py-1 font-mono break-all">
+                <span class="text-[10px] font-bold block text-error/60 mb-0.5">ANTES</span>
+                {{ formatAuditValue(diff.antes) }}
+              </div>
+              <!-- Flecha -->
+              <div class="flex items-center justify-center text-base-content/30 pt-4">
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+              </div>
+              <!-- Valor nuevo -->
+              <div class="bg-success/10 text-success rounded px-2 py-1 font-mono break-all">
+                <span class="text-[10px] font-bold block text-success/60 mb-0.5">AHORA</span>
+                {{ formatAuditValue(diff.despues) }}
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- CREACIÓN: nuevos valores -->
+          <ng-container *ngIf="log.accion === 'Creación'">
+            <p class="text-xs font-bold text-base-content/50 uppercase tracking-widest mb-2">Valores creados</p>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <div *ngFor="let entry of getValueEntries(log.valoresNuevos)"
+                class="bg-success/5 border border-success/20 rounded-lg p-2 text-xs">
+                <span class="text-[10px] font-bold text-success/60 uppercase block mb-0.5">{{ entry.campo }}</span>
+                <span class="font-mono text-base-content break-all">{{ formatAuditValue(entry.valor) }}</span>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- ELIMINACIÓN: valores eliminados -->
+          <ng-container *ngIf="log.accion === 'Eliminación'">
+            <p class="text-xs font-bold text-base-content/50 uppercase tracking-widest mb-2">Valores eliminados</p>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <div *ngFor="let entry of getValueEntries(log.valoresAntiguos)"
+                class="bg-error/5 border border-error/20 rounded-lg p-2 text-xs">
+                <span class="text-[10px] font-bold text-error/60 uppercase block mb-0.5">{{ entry.campo }}</span>
+                <span class="font-mono text-base-content break-all">{{ formatAuditValue(entry.valor) }}</span>
+              </div>
+            </div>
+          </ng-container>
+
+        </div>
+      </div>
+    </div>
+
+
   </div>
 </div>
 
@@ -593,4 +741,87 @@
     </div>
   </div>
   <div class="modal-backdrop bg-neutral-900/60 backdrop-blur-sm" (click)="closeConfirmModal()"></div>
+</div>
+
+<!-- Reporte Candidatos Modal -->
+<div class="modal modal-bottom sm:modal-middle transition-all duration-300" [class.modal-open]="showReportesCandidatosModal">
+  <div class="modal-box border border-base-200 shadow-xl relative p-6">
+    <button (click)="closeReporteCandidatosModal()" class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4">✕</button>
+    <h3 class="font-bold text-lg text-primary mb-4 flex items-center gap-2">
+      <span class="material-symbols-outlined">download</span> Generar Reporte de Candidatos
+    </h3>
+    <div class="space-y-4">
+      <div class="grid grid-cols-2 gap-4">
+        <div class="form-control w-full">
+          <label class="label"><span class="label-text">Fecha Inicio</span></label>
+          <input type="date" class="input input-bordered input-sm" [(ngModel)]="filtroCandFechaInicio" />
+        </div>
+        <div class="form-control w-full">
+          <label class="label"><span class="label-text">Fecha Fin</span></label>
+          <input type="date" class="input input-bordered input-sm" [(ngModel)]="filtroCandFechaFin" />
+        </div>
+      </div>
+      <div class="form-control w-full">
+        <label class="label"><span class="label-text">Carrera</span></label>
+        <select class="select select-bordered select-sm" [(ngModel)]="filtroCandCarreraId">
+          <option value="">Todas</option>
+          <option *ngFor="let c of carreras" [value]="c.id">{{ c.nombre }}</option>
+        </select>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="form-control w-full">
+          <label class="label"><span class="label-text">Departamento</span></label>
+          <select class="select select-bordered select-sm" [(ngModel)]="filtroCandDepartamento">
+            <option value="">Todos</option>
+            <option *ngFor="let d of departamentosSV" [value]="d">{{ d }}</option>
+          </select>
+        </div>
+        <div class="form-control w-full">
+          <label class="label"><span class="label-text">Estado de Perfil</span></label>
+          <select class="select select-bordered select-sm" [(ngModel)]="filtroCandEstado">
+            <option value="">Cualquiera</option>
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-action mt-6">
+      <button class="btn btn-primary btn-sm px-6" (click)="descargarReporteCandidatos()">Descargar Excel</button>
+    </div>
+  </div>
+  <div class="modal-backdrop bg-neutral-900/60 backdrop-blur-sm" (click)="closeReporteCandidatosModal()"></div>
+</div>
+
+<!-- Reporte Empresas Modal -->
+<div class="modal modal-bottom sm:modal-middle transition-all duration-300" [class.modal-open]="showReportesEmpresasModal">
+  <div class="modal-box border border-base-200 shadow-xl relative p-6">
+    <button (click)="closeReporteEmpresasModal()" class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4">✕</button>
+    <h3 class="font-bold text-lg text-secondary mb-4 flex items-center gap-2">
+      <span class="material-symbols-outlined">download</span> Generar Reporte de Empresas
+    </h3>
+    <div class="space-y-4">
+      <div class="grid grid-cols-2 gap-4">
+        <div class="form-control w-full">
+          <label class="label"><span class="label-text">Fecha Inicio</span></label>
+          <input type="date" class="input input-bordered input-sm" [(ngModel)]="filtroEmpFechaInicio" />
+        </div>
+        <div class="form-control w-full">
+          <label class="label"><span class="label-text">Fecha Fin</span></label>
+          <input type="date" class="input input-bordered input-sm" [(ngModel)]="filtroEmpFechaFin" />
+        </div>
+      </div>
+      <div class="form-control w-full">
+        <label class="label"><span class="label-text">Sector</span></label>
+        <select class="select select-bordered select-sm" [(ngModel)]="filtroEmpSectorId">
+          <option value="">Todos</option>
+          <option *ngFor="let s of sectores" [value]="s.id">{{ s.nombre }}</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-action mt-6">
+      <button class="btn btn-secondary btn-sm px-6 text-white" (click)="descargarReporteEmpresas()">Descargar Excel</button>
+    </div>
+  </div>
+  <div class="modal-backdrop bg-neutral-900/60 backdrop-blur-sm" (click)="closeReporteEmpresasModal()"></div>
 </div>

@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../services/Admin/admin.service';
-import { AdminDashboardStatsDTO, UsuarioDTO, AdminEmpresaDTO } from '../../models/Admin/admin';
+import { AdminDashboardStatsDTO, UsuarioDTO, AdminEmpresaDTO, AuditLogDTO } from '../../models/Admin/admin';
 import { OfertaLaboral } from '../../models/OfertasLaborales/oferta-laboral';
 import { CatalogosService } from '../../services/Catalogo/catalogos.service';
 import { CatalogDTO } from '../../models/Catalog/catalog';
@@ -19,13 +19,14 @@ export class AdminComponent implements OnInit {
   private catalogosService = inject(CatalogosService);
 
   // Active Tab
-  activeTab: 'dashboard' | 'usuarios' | 'empresas' | 'ofertas' | 'catalogos' = 'dashboard';
+  activeTab: 'dashboard' | 'usuarios' | 'empresas' | 'ofertas' | 'catalogos' | 'auditoria' = 'dashboard';
 
   // Loading States
   loadingStats: boolean = false;
   loadingUsers: boolean = false;
   loadingCompanies: boolean = false;
   loadingJobs: boolean = false;
+  loadingAuditoria: boolean = false;
 
   // Error Messages
   errorMsg: string | null = null;
@@ -35,6 +36,7 @@ export class AdminComponent implements OnInit {
   users: UsuarioDTO[] = [];
   companies: AdminEmpresaDTO[] = [];
   jobPosts: OfertaLaboral[] = [];
+  auditLogs: AuditLogDTO[] = [];
 
   // Filtered Data
   filteredUsers: UsuarioDTO[] = [];
@@ -60,12 +62,66 @@ export class AdminComponent implements OnInit {
   loadingCatalog: boolean = false;
   newCatalogName: string = '';
 
+  // Audit Log expanded row
+  expandedLogId: number | null = null;
+
+  // Reportes Modals State
+  showReportesCandidatosModal: boolean = false;
+  showReportesEmpresasModal: boolean = false;
+  
+  // Filtros Candidatos
+  filtroCandFechaInicio: string = '';
+  filtroCandFechaFin: string = '';
+  filtroCandCarreraId: string = '';
+  filtroCandDepartamento: string = '';
+  filtroCandEstado: string = '';
+
+  // Filtros Empresas
+  filtroEmpFechaInicio: string = '';
+  filtroEmpFechaFin: string = '';
+  filtroEmpSectorId: string = '';
+
+  departamentosSV = [
+    'Ahuachapán', 'Cabañas', 'Chalatenango', 'Cuscatlán', 'La Libertad',
+    'La Paz', 'La Unión', 'Morazán', 'San Miguel', 'San Salvador',
+    'San Vicente', 'Santa Ana', 'Sonsonate', 'Usulután'
+  ];
+
+  // Human-readable field name map
+  private fieldLabels: Record<string, string> = {
+    Nombre: 'Nombre',
+    Titulo: 'Título',
+    Descripcion: 'Descripción',
+    Activo: 'Estado activo',
+    Email: 'Correo',
+    PasswordHash: 'Contraseña',
+    RolId: 'Rol',
+    FechaPublicacion: 'Fecha publicación',
+    FechaExpiracion: 'Fecha expiración',
+    Salario: 'Salario',
+    Ubicacion: 'Ubicación',
+    ModalidadId: 'Modalidad',
+    NombreComercial: 'Nombre comercial',
+    NombreCompleto: 'Nombre completo',
+    Telefono: 'Teléfono',
+    DireccionWeb: 'Sitio web',
+    BuscaEmpleo: 'Busca empleo',
+    SobreMi: 'Sobre mí',
+    FotoUrl: 'Foto URL',
+    EnlaceGitHub: 'GitHub',
+    EnlaceLinkedIn: 'LinkedIn',
+    CarreraId: 'Carrera',
+    SectorId: 'Sector',
+    EsObligatorio: 'Es obligatorio',
+  };
+
   ngOnInit(): void {
     this.loadStats();
     this.loadUsers();
     this.loadCompanies();
     this.loadJobPosts();
     this.loadCatalogData();
+    this.loadAuditLogs();
   }
 
   // --- Data Loading ---
@@ -86,6 +142,65 @@ export class AdminComponent implements OnInit {
         this.loadingStats = false;
       }
     });
+  }
+
+  loadAuditLogs(): void {
+    this.loadingAuditoria = true;
+    this.adminService.getAuditLogs().subscribe({
+      next: (res) => {
+        if (res.status && res.value) {
+          this.auditLogs = res.value;
+        } else {
+          this.errorMsg = res.msg || 'No se pudo cargar el registro de auditoría.';
+        }
+        this.loadingAuditoria = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.errorMsg = 'Error al conectar con el servidor para auditoría.';
+        this.loadingAuditoria = false;
+      }
+    });
+  }
+
+  toggleLogDetail(id: number): void {
+    this.expandedLogId = this.expandedLogId === id ? null : id;
+  }
+
+  parseJson(json: string | null | undefined): Record<string, any> {
+    if (!json) return {};
+    try { return JSON.parse(json); } catch { return {}; }
+  }
+
+  getDiffEntries(log: AuditLogDTO): { campo: string; antes: any; despues: any }[] {
+    const antiguo = this.parseJson(log.valoresAntiguos);
+    const nuevo = this.parseJson(log.valoresNuevos);
+    const keys = new Set([...Object.keys(antiguo), ...Object.keys(nuevo)]);
+    const entries: { campo: string; antes: any; despues: any }[] = [];
+    keys.forEach(k => {
+      const antes = antiguo[k];
+      const despues = nuevo[k];
+      if (JSON.stringify(antes) !== JSON.stringify(despues)) {
+        entries.push({ campo: this.fieldLabels[k] ?? k, antes, despues });
+      }
+    });
+    return entries;
+  }
+
+  getValueEntries(json: string | null | undefined): { campo: string; valor: any }[] {
+    const obj = this.parseJson(json);
+    return Object.entries(obj)
+      .filter(([k]) => !['Id', 'FechaCreacion', 'FechaModificacion', 'UsuarioCreacionId', 'UsuarioModificacionId'].includes(k))
+      .map(([k, v]) => ({ campo: this.fieldLabels[k] ?? k, valor: v }));
+  }
+
+  formatAuditValue(value: any): string {
+    if (value === null || value === undefined) return '—';
+    if (typeof value === 'boolean') return value ? 'Sí' : 'No';
+    if (typeof value === 'string' && value.match(/^\d{4}-\d{2}-\d{2}T/)) {
+      return new Date(value).toLocaleString('es-SV');
+    }
+    return String(value);
   }
 
   loadUsers(): void {
@@ -357,5 +472,88 @@ export class AdminComponent implements OnInit {
       this.pendingAction();
     }
     this.closeConfirmModal();
+  }
+
+  // --- Reportes Helpers ---
+  openReporteCandidatosModal(): void {
+    this.showReportesCandidatosModal = true;
+    this.filtroCandFechaInicio = '';
+    this.filtroCandFechaFin = '';
+    this.filtroCandCarreraId = '';
+    this.filtroCandDepartamento = '';
+    this.filtroCandEstado = '';
+    if (this.carreras.length === 0) {
+      this.catalogosService.obtenerCarreras().subscribe(res => { if (res.value) this.carreras = res.value; });
+    }
+  }
+
+  closeReporteCandidatosModal(): void {
+    this.showReportesCandidatosModal = false;
+  }
+
+  descargarReporteCandidatos(): void {
+    const params: any = {};
+    if (this.filtroCandFechaInicio) params.fechaInicio = this.filtroCandFechaInicio;
+    if (this.filtroCandFechaFin) params.fechaFin = this.filtroCandFechaFin;
+    if (this.filtroCandCarreraId) params.carreraId = this.filtroCandCarreraId;
+    if (this.filtroCandDepartamento) params.departamento = this.filtroCandDepartamento;
+    if (this.filtroCandEstado) params.estado = this.filtroCandEstado;
+
+    this.adminService.getReporteCandidatos(params).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Reporte_Candidatos_${new Date().toISOString().split('T')[0]}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.closeReporteCandidatosModal();
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error al generar el reporte de candidatos.');
+      }
+    });
+  }
+
+  openReporteEmpresasModal(): void {
+    this.showReportesEmpresasModal = true;
+    this.filtroEmpFechaInicio = '';
+    this.filtroEmpFechaFin = '';
+    this.filtroEmpSectorId = '';
+    if (this.sectores.length === 0) {
+      this.catalogosService.obtenerSectores().subscribe(res => { if (res.value) this.sectores = res.value; });
+    }
+  }
+
+  closeReporteEmpresasModal(): void {
+    this.showReportesEmpresasModal = false;
+  }
+
+  descargarReporteEmpresas(): void {
+    const params: any = {};
+    if (this.filtroEmpFechaInicio) params.fechaInicio = this.filtroEmpFechaInicio;
+    if (this.filtroEmpFechaFin) params.fechaFin = this.filtroEmpFechaFin;
+    if (this.filtroEmpSectorId) params.sectorId = this.filtroEmpSectorId;
+
+    this.adminService.getReporteEmpresas(params).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Reporte_Empresas_${new Date().toISOString().split('T')[0]}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.closeReporteEmpresasModal();
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error al generar el reporte de empresas.');
+      }
+    });
   }
 }

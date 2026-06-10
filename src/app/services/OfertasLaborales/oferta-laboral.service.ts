@@ -15,8 +15,12 @@ export class OfertaLaboralService {
 
   constructor() { }
 
-  lista(): Observable<ResponseAPI<OfertaLaboral[]>> {
-    return this.http.get<ResponseAPI<OfertaLaboral[]>>(`${this.apiUrl}lista`);
+  lista(keyword?: string, carreraId?: number, sectorId?: number): Observable<ResponseAPI<OfertaLaboral[]>> {
+    let params: any = {};
+    if (keyword) params.keyword = keyword;
+    if (carreraId) params.carreraId = carreraId;
+    if (sectorId) params.sectorId = sectorId;
+    return this.http.get<ResponseAPI<OfertaLaboral[]>>(`${this.apiUrl}lista`, { params });
   }
 
   obtenerMisOfertas(): Observable<ResponseAPI<OfertaLaboral[]>> {

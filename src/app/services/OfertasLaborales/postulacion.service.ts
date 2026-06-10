@@ -32,4 +32,8 @@ export class PostulacionService {
   descargarCV(perfilId: number): Observable<Blob> {
     return this.http.get(`${this.apiUrl}CV/${perfilId}`, { responseType: 'blob' });
   }
+
+  cambiarEstadoPostulacion(id: number, nuevoEstadoId: number): Observable<ResponseAPI<boolean>> {
+    return this.http.put<ResponseAPI<boolean>>(`${this.apiUrl}${id}/Estado`, nuevoEstadoId);
+  }
 }

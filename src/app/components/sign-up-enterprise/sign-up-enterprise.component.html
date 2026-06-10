@@ -2,7 +2,7 @@
   
   <div class="card lg:card-side bg-base-100 shadow-2xl max-w-6xl w-full mx-auto overflow-hidden rounded-box flex-col lg:flex-row">
     
-    <div class="bg-neutral text-neutral-content lg:w-1/3 p-10 flex flex-col justify-between relative overflow-hidden">
+    <div class="bg-neutral text-neutral-content hidden lg:flex lg:w-1/3 p-10 flex-col justify-between relative overflow-hidden">
       <div class="absolute -top-24 -left-24 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl"></div>
       
       <div>
@@ -33,9 +33,9 @@
       </div>
     </div>
 
-    <div class="lg:w-2/3 p-8 lg:p-12 flex flex-col">
+    <div class="w-full lg:w-2/3 p-6 sm:p-8 lg:p-12 flex flex-col">
       
-      <div class="flex justify-between items-center mb-8 border-b border-base-200 pb-4">
+      <div class="flex justify-between items-center mb-4 border-b border-base-200 pb-4">
         <div>
           <h2 class="text-2xl font-bold text-base-content">Crear Cuenta de Empresa</h2>
           <div class="breadcrumbs text-xs text-base-content/60 mt-1">
@@ -45,6 +45,14 @@
               <li class="text-primary font-semibold">Registrarse</li>
             </ul>
           </div>
+        </div>
+      </div>
+
+      <div class="bg-blue-50 border-l-4 border-blue-500 rounded-md mb-6 p-4 flex items-start gap-3 text-blue-900 shadow-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-blue-600 shrink-0 w-6 h-6 mt-0.5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <div>
+          <h3 class="font-bold text-sm text-blue-800">Proceso de Verificación</h3>
+          <div class="text-xs opacity-90 mt-1">Para garantizar la seguridad de nuestra comunidad estudiantil, todas las cuentas empresariales pasan por un breve proceso de revisión. Una vez creada tu cuenta, deberás esperar la aprobación de la universidad antes de poder iniciar sesión y publicar ofertas.</div>
         </div>
       </div>
 
@@ -60,7 +68,7 @@
             </label>
           </div>
 
-          <div class="form-control">
+          <div class="form-control md:col-span-2">
             <label for="sector" class="label py-1"><span class="label-text font-bold text-xs">Sector Industrial <span class="text-error">*</span></span></label>
             <select id="sector" formControlName="sectorId" class="select select-bordered bg-base-100 rounded-xl focus:ring-2 focus:ring-primary/50 text-sm">
               <option value="" disabled selected>Seleccione un sector</option>

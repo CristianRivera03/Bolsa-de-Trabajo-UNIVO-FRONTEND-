@@ -29,3 +29,14 @@ export interface AdminEmpresaDTO {
   activo: boolean;
   fechaRegistro?: string;
 }
+
+export interface AuditLogDTO {
+  id: number;
+  nombreTabla: string;
+  accion: string;
+  registroId: string;
+  valoresAntiguos: string;
+  valoresNuevos: string;
+  fecha: string;
+  usuarioId?: number;
+}

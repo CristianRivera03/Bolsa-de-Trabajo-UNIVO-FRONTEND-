@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 import { ResponseAPI } from '../../models/response-api';
-import { AdminDashboardStatsDTO, UsuarioDTO, AdminEmpresaDTO } from '../../models/Admin/admin';
+import { AdminDashboardStatsDTO, UsuarioDTO, AdminEmpresaDTO, AuditLogDTO } from '../../models/Admin/admin';
 import { OfertaLaboral } from '../../models/OfertasLaborales/oferta-laboral';
 
 @Injectable({
@@ -39,5 +39,18 @@ export class AdminService {
 
   toggleJobPost(id: number, active: boolean): Observable<ResponseAPI<boolean>> {
     return this.http.post<ResponseAPI<boolean>>(`${this.apiUrl}jobposts/${id}/toggle?active=${active}`, {});
+  }
+
+  getAuditLogs(): Observable<ResponseAPI<AuditLogDTO[]>> {
+    return this.http.get<ResponseAPI<AuditLogDTO[]>>(`${this.apiUrl}audit-logs`);
+  }
+
+  // Se envían los parámetros por la URL y se espera un Blob como respuesta
+  getReporteCandidatos(params?: any): Observable<Blob> {
+    return this.http.get(environment.endpoint + '/Reportes/Candidatos', { params, responseType: 'blob' });
+  }
+
+  getReporteEmpresas(params?: any): Observable<Blob> {
+    return this.http.get(environment.endpoint + '/Reportes/Empresas', { params, responseType: 'blob' });
   }
 }

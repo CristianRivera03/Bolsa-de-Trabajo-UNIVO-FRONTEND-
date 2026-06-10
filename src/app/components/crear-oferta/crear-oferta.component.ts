@@ -7,6 +7,7 @@ import { OfertaLaboralCreate } from '../../models/OfertasLaborales/oferta-labora
 import { SessionDTO } from '../../models/Auth/Auth';
 import { CatalogosService } from '../../services/Catalogo/catalogos.service';
 import { CatalogDTO } from '../../models/Catalog/catalog';
+import { CryptoUtil } from '../../utils/crypto.util';
 
 
 @Component({
@@ -77,9 +78,9 @@ export class CrearOfertaComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const sesionStr = localStorage.getItem('userSession'); 
-    if (sesionStr) {
-      this.sesionActual = JSON.parse(sesionStr) as SessionDTO;
+    const sesion = CryptoUtil.getSession(); 
+    if (sesion) {
+      this.sesionActual = sesion;
       this.cargarCatalogos(); 
     } else {
       this.router.navigate(['/login']);

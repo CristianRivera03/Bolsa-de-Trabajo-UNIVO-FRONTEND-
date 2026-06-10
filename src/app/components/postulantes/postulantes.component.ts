@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { OfertaLaboralService } from '../../services/OfertasLaborales/oferta-laboral.service';
 import { PostulacionService } from '../../services/OfertasLaborales/postulacion.service';
 import { OfertaLaboral } from '../../models/OfertasLaborales/oferta-laboral';
@@ -9,7 +10,7 @@ import { PostulacionDTO } from '../../models/OfertasLaborales/postulacion';
 @Component({
   selector: 'app-postulantes',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './postulantes.component.html'
 })
 export class PostulantesComponent implements OnInit {
@@ -157,16 +158,57 @@ export class PostulantesComponent implements OnInit {
     switch (estado.toLowerCase()) {
       case 'recibida':
         return 'badge-info bg-info/10 text-info border-none';
+      case 'en revisión':
       case 'en revision':
         return 'badge-warning bg-warning/10 text-warning border-none';
+      case 'entrevista':
       case 'entrevista programada':
         return 'badge-primary bg-primary/10 text-primary border-none';
       case 'seleccionado':
         return 'badge-success bg-success/10 text-success border-none';
+      case 'descartado':
       case 'no seleccionado':
         return 'badge-error bg-error/10 text-error border-none';
       default:
         return 'badge-ghost';
     }
+  }
+
+  estadosDisponibles = [
+    { id: 1, nombre: 'Recibida' },
+    { id: 2, nombre: 'En revisión' },
+    { id: 3, nombre: 'Entrevista' },
+    { id: 4, nombre: 'Seleccionado' },
+    { id: 5, nombre: 'Descartado' }
+  ];
+
+  obtenerEstadoId(nombre: string): number {
+    const estado = this.estadosDisponibles.find(e => e.nombre.toLowerCase() === nombre.toLowerCase() ||
+      (e.id === 5 && nombre.toLowerCase() === 'no seleccionado') ||
+      (e.id === 3 && nombre.toLowerCase() === 'entrevista programada') ||
+      (e.id === 2 && nombre.toLowerCase() === 'en revision')
+    );
+    return estado ? estado.id : 1;
+  }
+
+  actualizarEstado(postulante: PostulacionDTO, nuevoEstadoIdStr: string) {
+    const nuevoEstadoId = parseInt(nuevoEstadoIdStr, 10);
+    this.postulacionService.cambiarEstadoPostulacion(postulante.id, nuevoEstadoId).subscribe({
+      next: (res) => {
+        if (res.status) {
+          const estadoObj = this.estadosDisponibles.find(e => e.id === nuevoEstadoId);
+          if (estadoObj) {
+            postulante.estadoNombre = estadoObj.nombre;
+          }
+          alert('Estado actualizado y estudiante notificado exitosamente.');
+        } else {
+          alert('No se pudo actualizar el estado.');
+        }
+      },
+      error: (err) => {
+        console.error('Error al actualizar estado:', err);
+        alert('Ocurrió un error al cambiar el estado.');
+      }
+    });
   }
 }
