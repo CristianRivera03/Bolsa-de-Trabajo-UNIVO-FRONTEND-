@@ -63,10 +63,10 @@
     </nav>
 
     <!-- Footer del Sidebar (Info del Estudiante) -->
-    <div class="p-4 border-t border-base-200 min-h-[5rem] flex flex-col  justify-center ">
+    <div class="p-4 border-t border-base-200 min-h-20 flex flex-col  justify-center ">
 
       <!-- Cerrar sesion -->
-      <div class="py-2">
+      <div class="py-2" [ngClass]="!isSidebarExpanded ? 'flex justify-center' : ''">
         <button class="btn btn-ghost btn-sm text-error" (click)="logout()">
           <span class="material-symbols-outlined">logout</span>
           <span *ngIf="isSidebarExpanded" class="ml-2">Cerrar Sesión</span>
@@ -81,9 +81,11 @@
         </p>
       </div>
       <!-- Icono de usuario genérico cuando está colapsado -->
-      <div *ngIf="!isSidebarExpanded" class="avatar placeholder cursor-pointer">
-        <div class="bg-base-300 text-base-content rounded-full w-10">
-          <span class="material-symbols-outlined">person</span>
+      <div *ngIf="!isSidebarExpanded" class="w-full flex justify-center">
+        <div class="avatar placeholder cursor-pointer">
+          <div class="bg-base-300 text-base-content rounded-full w-10 flex items-center justify-center">
+            <span class="material-symbols-outlined">person</span>
+          </div>
         </div>
       </div>
     </div>
@@ -115,9 +117,7 @@
         </div>
       </div>
 
-      <div class="ml-auto flex items-center gap-4">
-        <!-- Eliminado el botón de notificaciones a petición del usuario -->
-      </div>
+
     </header>
 
     <!-- Contenedor del contenido principal -->
