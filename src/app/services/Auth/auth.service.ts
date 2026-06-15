@@ -40,4 +40,13 @@ export class AuthService {
   restablecerPassword(dto: import('../../models/Auth/Auth').RestablecerPasswordDTO): Observable<ResponseAPI<string>> {
     return this.http.post<ResponseAPI<string>>(`${this.apiUrl}/Auth/reset-password`, dto);
   }
+
+  /**
+   * Changes the user's password internally by verifying the current password.
+   * @param dto Object containing the current and new passwords.
+   * @returns An observable with the API response status.
+   */
+  cambiarPassword(dto: import('../../models/Auth/Auth').CambiarPasswordDTO): Observable<ResponseAPI<string>> {
+    return this.http.post<ResponseAPI<string>>(`${this.apiUrl}/Auth/cambiar-password`, dto);
+  }
 }

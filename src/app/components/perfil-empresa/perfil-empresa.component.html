@@ -1,13 +1,20 @@
 <div class="container mx-auto px-4 py-8 max-w-4xl animate-fade-in">
   
-  <div class="mb-8">
-    <h1 class="text-3xl font-bold text-primary flex items-center gap-3">
-      <span class="material-symbols-outlined text-4xl">domain</span>
-      Perfil Corporativo
-    </h1>
-    <p class="text-base-content/70 mt-2">
-      Esta información será visible para los estudiantes y la universidad.
-    </p>
+  <div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div>
+      <h1 class="text-3xl font-bold text-primary flex items-center gap-3">
+        <span class="material-symbols-outlined text-4xl">domain</span>
+        Perfil Corporativo
+      </h1>
+      <p class="text-base-content/70 mt-2">
+        Esta información será visible para los estudiantes y la universidad.
+      </p>
+    </div>
+    <button class="btn btn-outline btn-secondary shadow-sm min-w-[170px]" 
+            type="button" 
+            (click)="abrirModalCambiarPassword()">
+      <span class="material-symbols-outlined">lock_reset</span> Cambiar Contraseña
+    </button>
   </div>
 
   @if (isLoading) {
@@ -239,3 +246,5 @@
     </form>
   }
 </div>
+
+<app-cambiar-password-modal></app-cambiar-password-modal>

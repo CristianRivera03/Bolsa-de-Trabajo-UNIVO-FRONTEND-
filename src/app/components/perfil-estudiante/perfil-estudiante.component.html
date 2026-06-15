@@ -29,6 +29,11 @@
     }
     
   </button>
+  <button class="btn btn-outline btn-secondary shadow-sm min-w-[170px] mt-2 sm:mt-0 sm:ml-2" 
+          type="button" 
+          (click)="abrirModalCambiarPassword()">
+    <span class="material-symbols-outlined">lock_reset</span> Cambiar Contraseña
+  </button>
 </div>
     </div>
   </div>
@@ -265,3 +270,4 @@
 <app-modal-habilidad (guardadoExitoso)="recargarPerfil()"></app-modal-habilidad>
 <app-modal-idioma (guardadoExitoso)="recargarPerfil()"></app-modal-idioma>
 <app-modal-proyecto (guardadoExitoso)="recargarPerfil()"></app-modal-proyecto>
+<app-cambiar-password-modal></app-cambiar-password-modal>

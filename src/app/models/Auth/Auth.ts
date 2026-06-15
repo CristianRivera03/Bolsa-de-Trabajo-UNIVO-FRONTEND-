@@ -20,3 +20,8 @@ export interface RestablecerPasswordDTO {
     token: string;
     nuevaPassword: string;
 }
+
+export interface CambiarPasswordDTO {
+    currentPassword: string;
+    newPassword: string;
+}

@@ -4,11 +4,12 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractContro
 import { EmpresaUpdateDTO } from '../../models/Empresa/empresa';
 import { EnterpriseService } from '../../services/Enterprise/enterprise.service';
 import { CatalogosService } from '../../services/Catalogo/catalogos.service';
+import { CambiarPasswordModalComponent } from '../modals/cambiar-password-modal/cambiar-password-modal.component';
 
 @Component({
   selector: 'app-perfil-empresa',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, CambiarPasswordModalComponent],
   templateUrl: './perfil-empresa.component.html'
 })
 export class PerfilEmpresaComponent implements OnInit {
@@ -214,5 +215,12 @@ export class PerfilEmpresaComponent implements OnInit {
         console.error(err);
       }
     });
+  }
+
+  abrirModalCambiarPassword() {
+    const modal = document.getElementById('cambiar_password_modal') as HTMLDialogElement;
+    if (modal) {
+      modal.showModal();
+    }
   }
 }

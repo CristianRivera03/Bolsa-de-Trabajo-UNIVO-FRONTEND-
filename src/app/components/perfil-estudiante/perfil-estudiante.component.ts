@@ -5,6 +5,7 @@ import { PerfilEstudianteService } from '../../services/perfil-estudiante/perfil
 import { CatalogosService } from '../../services/Catalogo/catalogos.service';
 import { PerfilEstudianteDTO,PerfilEstudianteUpdateDTO,EducacionDTO,ExperienciaLaboralDTO,EstudianteHabilidadDTO,EstudianteIdiomaDTO,ProyectoEstudianteDTO} from '../../models/Alumnos/perfil-estudiante';
 import { ModalEducacionComponent } from '../modals/education-modal/education-modal.component';
+import { CambiarPasswordModalComponent } from '../modals/cambiar-password-modal/cambiar-password-modal.component';
 import {ViewChild} from '@angular/core';
 import { EducacionService } from '../../services/perfil-estudiante/educacion.service';
 import { ModalExperienciaComponent } from '../modals/experiencia-modal/experiencia-modal.component';
@@ -20,7 +21,7 @@ import { ProyectoService } from '../../services/perfil-estudiante/proyecto.servi
 @Component({
   selector: 'app-perfil-estudiante',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ModalEducacionComponent, ModalExperienciaComponent, ModalHabilidadComponent, ModalIdiomaComponent , ModalProyectoComponent],
+  imports: [CommonModule, ReactiveFormsModule, ModalEducacionComponent, ModalExperienciaComponent, ModalHabilidadComponent, ModalIdiomaComponent , ModalProyectoComponent, CambiarPasswordModalComponent],
   templateUrl: './perfil-estudiante.component.html',
 })
 export class PerfilEstudianteComponent implements OnInit {
@@ -420,5 +421,11 @@ eliminarExperiencia(id: number) {
     this.cargarDatosPerfil();
   }
 
+  abrirModalCambiarPassword() {
+    const modal = document.getElementById('cambiar_password_modal') as HTMLDialogElement;
+    if (modal) {
+      modal.showModal();
+    }
+  }
 
 }
